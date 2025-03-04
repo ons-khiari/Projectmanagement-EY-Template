@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useOptimistic } from "react";
+import type React from "react";
+
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import eylogo from "../public/images/EY-logo.png";
 
@@ -16,7 +19,7 @@ function SubmitButton() {
       disabled={pending}
       className="rounded bg-[#ffe500] px-6 py-2 font-medium text-[#2e2e38] hover:bg-[#f5dc00] disabled:opacity-70"
     >
-      {pending ? "Signing in..." : "Next"}
+      {pending ? "Signing in..." : "Sign in"}
     </button>
   );
 }
@@ -24,86 +27,170 @@ function SubmitButton() {
 // Login form with React 19 features
 export default function LoginForm() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [step, setStep] = useState(1); // 1 = email, 2 = password
   const router = useRouter();
 
-  // Optimistic UI update using React 19's useOptimistic
-  const [optimisticEmail, addOptimisticEmail] = useOptimistic(
-    email,
-    (state, newEmail: string) => newEmail
-  );
-
-  // Form submission using Next.js 15 Server Actions pattern
-  async function handleSubmit(formData: FormData) {
-    const email = formData.get("email") as string;
-
-    // Optimistic update
-    addOptimisticEmail(email);
+  // Form submission for email step
+  async function handleEmailSubmit(e: React.FormEvent) {
+    e.preventDefault();
 
     try {
-      // Simulate authentication process
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // In a real app, you would validate and authenticate here
+      // Validate email
       if (!email.includes("@")) {
         setErrorMessage("Please enter a valid email address");
         return;
       }
 
-      // Redirect after successful login
-      // router.push('/dashboard');
-      console.log("Login successful with email:", email);
+      // Move to password step
+      setStep(2);
+      setErrorMessage("");
     } catch (error) {
       setErrorMessage("An error occurred. Please try again.");
       console.error("Login error:", error);
     }
   }
 
+  // Form submission for password step
+  async function handlePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    try {
+      // Simulate authentication process
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // In a real app, you would validate the credentials here
+      console.log("Login attempt with:", { email, password });
+
+      // Redirect after successful login
+      router.push("/tasks");
+    } catch (error) {
+      setErrorMessage("Invalid email or password. Please try again.");
+      console.error("Login error:", error);
+    }
+  }
+
+  // Go back to email step
+  function handleBack() {
+    setStep(1);
+    setErrorMessage("");
+  }
+
   return (
-    <div className="w-full max-w-md rounded bg-[#ffffff] p-8 shadow-lg">
+    <div className="w-full max-w-md rounded bg-white p-8 shadow-lg">
       {/* EY Logo */}
       <div className="mb-6 flex items-center">
         <Image src={eylogo} alt="EY Logo" width={100} height={60} />
       </div>
 
-      {/* Sign in heading */}
+      {/* Form heading */}
       <h2 className="mb-6 text-2xl font-medium text-[#2e2e38]">
-        Sign in to EY Boards
+        {step === 1 ? "Sign in to EY Boards" : "Enter password"}
       </h2>
 
-      {/* Login form */}
-      <form action={handleSubmit}>
-        <div className="mb-6">
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full border-b border-gray-300 pb-2 pt-1 outline-none focus:border-[#007aff]"
-            required
-          />
-          {errorMessage && (
-            <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
-          )}
-        </div>
+      {/* Email step */}
+      {step === 1 && (
+        <form onSubmit={handleEmailSubmit}>
+          <div className="mb-6">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full border-b border-gray-300 pb-2 pt-1 outline-none focus:border-[#007aff]"
+              required
+            />
+            {errorMessage && (
+              <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
+            )}
+          </div>
 
-        {/* Help text */}
-        <div className="mb-8">
-          <a href="#" className="text-sm text-[#007aff] hover:underline">
-            Can't access your account ?
-          </a>
-          <br />
-          <a href="#" className="text-sm text-[#007aff] hover:underline">
-            Sign in with EY account or a security key
-          </a>
-        </div>
+          {/* Help text */}
+          <div className="mb-8 space-y-2">
+            <a
+              href="#"
+              className="block text-sm text-[#007aff] hover:underline"
+            >
+              Can't access your account ?
+            </a>
+            <a
+              href="#"
+              className="block text-sm text-[#007aff] hover:underline"
+            >
+              Sign in with EY account or a security key
+            </a>
+          </div>
 
-        {/* Next button */}
-        <div className="flex justify-end">
-          <SubmitButton />
-        </div>
-      </form>
+          {/* Next button */}
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="rounded bg-[#ffe500] px-6 py-2 font-medium text-[#2e2e38] hover:bg-[#f5dc00]"
+            >
+              Next
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Password step */}
+      {step === 2 && (
+        <form onSubmit={handlePasswordSubmit}>
+          <div className="mb-6">
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full border-b border-gray-300 pb-2 pt-1 outline-none focus:border-[#007aff]"
+                required
+                autoFocus
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errorMessage && (
+              <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
+            )}
+          </div>
+
+          {/* Help links */}
+          <div className="mb-8 space-y-2">
+            <a
+              href="#"
+              className="block text-sm text-[#007aff] hover:underline"
+            >
+              Forgotten my password
+            </a>
+            <a
+              href="#"
+              className="block text-sm text-[#007aff] hover:underline"
+            >
+              Sign in with another account
+            </a>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="rounded bg-gray-200 px-6 py-2 font-medium text-gray-700 hover:bg-gray-300"
+            >
+              Back
+            </button>
+            <SubmitButton />
+          </div>
+        </form>
+      )}
     </div>
   );
 }
