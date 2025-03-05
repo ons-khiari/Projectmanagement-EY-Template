@@ -17,30 +17,30 @@ const sampleUsers: User[] = [
   },
   {
     id: "2",
-    name: "Ons khiari",
-    email: "ons.khiari@esprit.tn",
+    name: "Arij ben said",
+    email: "arij.bensaid@esprit.tn",
     phoneNumber: "+216 55678206",
     cin: "1273TU4YT21",
-    role: "Project manager",
-    avatar: "OK",
+    role: "Team member",
+    avatar: "AS",
   },
   {
     id: "3",
-    name: "Ons khiari",
-    email: "ons.khiari@esprit.tn",
+    name: "Ahmed Jguirim",
+    email: "ahmed.jguirim@esprit.tn",
     phoneNumber: "+216 55678206",
     cin: "1273TU4YT21",
-    role: "Project manager",
-    avatar: "OK",
+    role: "client",
+    avatar: "AJ",
   },
   {
     id: "4",
-    name: "Ons khiari",
-    email: "ons.khiari@esprit.tn",
+    name: "Amine Mhenni",
+    email: "amine.mhenni@esprit.tn",
     phoneNumber: "+216 55678206",
     cin: "1273TU4YT21",
-    role: "Project manager",
-    avatar: "OK",
+    role: "admin",
+    avatar: "AM",
   },
 ];
 
@@ -61,7 +61,13 @@ export default function UsersDashboard() {
       return user.role.includes("admin") && matchesSearch;
     if (activeTab === "clients")
       return user.role.includes("client") && matchesSearch;
-    return matchesSearch;
+
+    // For any other tab, exclude users with 'admin' or 'client' role and apply the search query
+    return (
+      !user.role.includes("admin") &&
+      !user.role.includes("client") &&
+      matchesSearch
+    );
   });
 
   // Handle user deletion

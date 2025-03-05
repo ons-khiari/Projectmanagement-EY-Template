@@ -1,11 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Edit, Settings, Plus } from "lucide-react";
-import MonthlyCalendar from "./monthly-calendar";
+import {
+  Search,
+  Edit,
+  Settings,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  CalendarIcon,
+  Info,
+  X,
+} from "lucide-react";
+import ImprovedMonthlyCalendar from "./monthly-calendar";
+import WeeklyCalendar from "./weekly-calendar";
+import DailyCalendar from "./daily-calendar";
 import type { DeliverablePhase } from "@/app/types/deliverable-phase";
+import { months } from "@/app/utils/months";
 
-// Sample deliverable phase data
+// Sample deliverable phase data with more variety
 const sampleDeliverablePhases: DeliverablePhase[] = [
   {
     id: "1",
@@ -23,35 +36,231 @@ const sampleDeliverablePhases: DeliverablePhase[] = [
   },
   {
     id: "3",
-    title: "Deliverable of dev phase",
+    title: "Deliverable of QA phase",
     startDate: new Date(2023, 2, 8), // March 8, 2023
     endDate: new Date(2023, 2, 19), // March 19, 2023
     color: "yellow",
   },
+  {
+    id: "4",
+    title: "Deliverable of deployment phase",
+    startDate: new Date(2023, 2, 15), // March 15, 2023
+    endDate: new Date(2023, 2, 25), // March 25, 2023
+    color: "green",
+  },
+  {
+    id: "5",
+    title: "Deliverable of documentation phase",
+    startDate: new Date(2023, 2, 20), // March 20, 2023
+    endDate: new Date(2023, 2, 28), // March 28, 2023
+    color: "purple",
+  },
+  // Add more phases on the same days to demonstrate the "more" functionality
+  {
+    id: "6",
+    title: "Deliverable of testing phase",
+    startDate: new Date(2023, 2, 8), // March 8, 2023
+    endDate: new Date(2023, 2, 12), // March 12, 2023
+    color: "blue",
+  },
+  {
+    id: "7",
+    title: "Deliverable of review phase",
+    startDate: new Date(2023, 2, 8), // March 8, 2023
+    endDate: new Date(2023, 2, 10), // March 10, 2023
+    color: "green",
+  },
+  {
+    id: "8",
+    title: "Deliverable of planning phase",
+    startDate: new Date(2023, 2, 8), // March 8, 2023
+    endDate: new Date(2023, 2, 14), // March 14, 2023
+    color: "purple",
+  },
 ];
 
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-export default function ScheduleDashboard() {
+export default function ImprovedScheduleDashboard() {
   const [viewMode, setViewMode] = useState("monthly");
   const [currentMonth, setCurrentMonth] = useState(2); // March (0-indexed)
   const [currentYear, setCurrentYear] = useState(2023);
+  const [currentWeek, setCurrentWeek] = useState(0); // First week of the month
+  const [currentDay, setCurrentDay] = useState(1); // First day of the month
   const [deliverablePhases, setDeliverablePhases] = useState(
     sampleDeliverablePhases
   );
+  const [showHelp, setShowHelp] = useState(true);
+
+  // Calculate the number of weeks in the current month
+  const getWeeksInMonth = () => {
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const firstDayAdjusted = firstDay === 0 ? 6 : firstDay - 1; // Adjust for Monday as first day
+
+    return Math.ceil((daysInMonth + firstDayAdjusted) / 7);
+  };
+
+  // Function to navigate to previous month/week/day
+  const goToPrevious = () => {
+    if (viewMode === "monthly") {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(currentYear - 1);
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+      setCurrentWeek(0); // Reset to first week when changing months
+      setCurrentDay(1); // Reset to first day when changing months
+    } else if (viewMode === "weekly") {
+      if (currentWeek === 0) {
+        // Go to previous month, last week
+        if (currentMonth === 0) {
+          setCurrentMonth(11);
+          setCurrentYear(currentYear - 1);
+        } else {
+          setCurrentMonth(currentMonth - 1);
+        }
+        // Set to last week of the new month
+        setTimeout(() => {
+          setCurrentWeek(getWeeksInMonth() - 1);
+        }, 0);
+      } else {
+        setCurrentWeek(currentWeek - 1);
+      }
+    } else if (viewMode === "daily") {
+      if (currentDay === 1) {
+        // Go to previous month, last day
+        if (currentMonth === 0) {
+          setCurrentMonth(11);
+          setCurrentYear(currentYear - 1);
+        } else {
+          setCurrentMonth(currentMonth - 1);
+        }
+        // Set to last day of the new month
+        const lastDayOfMonth = new Date(currentYear, currentMonth, 0).getDate();
+        setCurrentDay(lastDayOfMonth);
+      } else {
+        setCurrentDay(currentDay - 1);
+      }
+    }
+  };
+
+  // Function to navigate to next month/week/day
+  const goToNext = () => {
+    if (viewMode === "monthly") {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(currentYear + 1);
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+      setCurrentWeek(0); // Reset to first week when changing months
+      setCurrentDay(1); // Reset to first day when changing months
+    } else if (viewMode === "weekly") {
+      const weeksInMonth = getWeeksInMonth();
+
+      if (currentWeek >= weeksInMonth - 1) {
+        // Go to next month, first week
+        if (currentMonth === 11) {
+          setCurrentMonth(0);
+          setCurrentYear(currentYear + 1);
+        } else {
+          setCurrentMonth(currentMonth + 1);
+        }
+        setCurrentWeek(0);
+      } else {
+        setCurrentWeek(currentWeek + 1);
+      }
+    } else if (viewMode === "daily") {
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+      if (currentDay >= daysInMonth) {
+        // Go to next month, first day
+        if (currentMonth === 11) {
+          setCurrentMonth(0);
+          setCurrentYear(currentYear + 1);
+        } else {
+          setCurrentMonth(currentMonth + 1);
+        }
+        setCurrentDay(1);
+      } else {
+        setCurrentDay(currentDay + 1);
+      }
+    }
+  };
+
+  // Function to go to today
+  const goToToday = () => {
+    const today = new Date();
+    setCurrentMonth(today.getMonth());
+    setCurrentYear(today.getFullYear());
+    setCurrentDay(today.getDate());
+
+    // Calculate the current week
+    const firstDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    ).getDay();
+    const firstDayAdjusted = firstDay === 0 ? 6 : firstDay - 1;
+    const todayDate = today.getDate();
+    const currentWeekIndex = Math.floor((todayDate + firstDayAdjusted - 1) / 7);
+
+    setCurrentWeek(currentWeekIndex);
+  };
+
+  // Close help tooltip
+  const closeHelp = () => {
+    setShowHelp(false);
+  };
+
+  // Get the current view title
+  const getCurrentViewTitle = () => {
+    if (viewMode === "monthly") {
+      return `${months[currentMonth]} ${currentYear}`;
+    } else if (viewMode === "weekly") {
+      // Calculate the first day of the week
+      const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+      const firstDayOfWeek = firstDayOfMonth.getDay();
+      const firstDayAdjusted = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+
+      const startOffset = currentWeek * 7 - firstDayAdjusted;
+      const weekStart = new Date(currentYear, currentMonth, 1 + startOffset);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+
+      // Format: "Mar 5 - Mar 11, 2023" or "Mar 26 - Apr 1, 2023"
+      if (weekStart.getMonth() === weekEnd.getMonth()) {
+        return `${months[weekStart.getMonth()].substring(
+          0,
+          3
+        )} ${weekStart.getDate()} - ${weekEnd.getDate()}, ${weekStart.getFullYear()}`;
+      } else {
+        return `${months[weekStart.getMonth()].substring(
+          0,
+          3
+        )} ${weekStart.getDate()} - ${months[weekEnd.getMonth()].substring(
+          0,
+          3
+        )} ${weekEnd.getDate()}, ${weekStart.getFullYear()}`;
+      }
+    } else if (viewMode === "daily") {
+      const date = new Date(currentYear, currentMonth, currentDay);
+      const dayOfWeek = date.getDay();
+      const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+
+      return `${daysOfWeek[dayOfWeek]}, ${months[currentMonth]} ${currentDay}, ${currentYear}`;
+    }
+
+    return "";
+  };
 
   return (
     <div className="h-full">
@@ -122,30 +331,99 @@ export default function ScheduleDashboard() {
         </div>
       </div>
 
-      {/* Month selector */}
-      <div className="mb-4 grid grid-cols-12 gap-1">
-        {months.map((month, index) => (
+      {/* Improved navigation */}
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <button
-            key={month}
-            className={`rounded-md px-2 py-1.5 text-center text-sm ${
-              index === currentMonth
-                ? "bg-blue-50 font-medium text-[#444444]"
-                : "text-gray-500 hover:bg-gray-100"
-            }`}
-            onClick={() => setCurrentMonth(index)}
+            onClick={goToPrevious}
+            className="rounded-full p-1 hover:bg-gray-100"
           >
-            {month}
+            <ChevronLeft className="h-5 w-5 text-gray-600" />
           </button>
-        ))}
+          <h2 className="text-xl font-medium text-[#444444]">
+            {getCurrentViewTitle()}
+          </h2>
+          <button
+            onClick={goToNext}
+            className="rounded-full p-1 hover:bg-gray-100"
+          >
+            <ChevronRight className="h-5 w-5 text-gray-600" />
+          </button>
+        </div>
+        <button
+          onClick={goToToday}
+          className="flex items-center gap-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100"
+        >
+          <CalendarIcon className="h-4 w-4" />
+          <span>Today</span>
+        </button>
       </div>
 
+      {/* Help tooltip */}
+      {/* {showHelp && (
+        <div className="relative mb-4">
+          <div className="rounded-lg bg-blue-50 p-3 pr-10 text-sm text-blue-800">
+            <div className="flex items-start">
+              <Info className="mr-2 h-5 w-5 flex-shrink-0 text-blue-500" />
+              <div>
+                <p className="font-medium">Pro Tip:</p>
+                {viewMode === "monthly" && (
+                  <p>
+                    When you see "+X more" on a day, click it to view all
+                    deliverable phases for that day. Hover over any phase to
+                    highlight it across the calendar.
+                  </p>
+                )}
+                {viewMode === "weekly" && (
+                  <p>
+                    Click on any phase to expand and see more details. Hover
+                    over a phase to highlight it across the week. Note that
+                    weekends are non-working days.
+                  </p>
+                )}
+                {viewMode === "daily" && (
+                  <p>
+                    View detailed information about all deliverable phases for
+                    this day. Hover over a phase to highlight it.
+                  </p>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={closeHelp}
+              className="absolute right-2 top-2 rounded-full p-1 text-blue-500 hover:bg-blue-100"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )} */}
+
       {/* Calendar */}
-      <div className="overflow-auto">
-        <MonthlyCalendar
-          year={currentYear}
-          month={currentMonth}
-          deliverablePhases={deliverablePhases}
-        />
+      <div className="overflow-auto rounded-lg bg-white shadow-sm">
+        {viewMode === "monthly" && (
+          <ImprovedMonthlyCalendar
+            year={currentYear}
+            month={currentMonth}
+            deliverablePhases={deliverablePhases}
+          />
+        )}
+        {viewMode === "weekly" && (
+          <WeeklyCalendar
+            year={currentYear}
+            month={currentMonth}
+            week={currentWeek}
+            deliverablePhases={deliverablePhases}
+          />
+        )}
+        {viewMode === "daily" && (
+          <DailyCalendar
+            year={currentYear}
+            month={currentMonth}
+            day={currentDay}
+            deliverablePhases={deliverablePhases}
+          />
+        )}
       </div>
     </div>
   );
