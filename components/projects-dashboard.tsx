@@ -9,75 +9,68 @@ import type { Project } from "@/app/types/project";
 const sampleProjects: Project[] = [
   {
     id: "1",
-    title: "Dashboard Design project",
-    status: "On going project",
+    title: "Dashboard design project",
     description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos, and the components we need.",
-    teamMembers: 5,
+      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
     progress: 50,
     progressColor: "blue",
     startDate: "10 Jan",
     endDate: "30 Jan",
+    members: [
+      { id: "1", avatar: "OK", color: "#27acaa" },
+      { id: "2", avatar: "JD", color: "#6366f1" },
+      { id: "3", avatar: "AS", color: "#f43f5e" },
+      { id: "4", avatar: "MK", color: "#8b5cf6" },
+      { id: "5", avatar: "RL", color: "#ec4899" },
+    ],
   },
   {
     id: "2",
-    title: "Dashboard Design project",
-    status: "On going project",
+    title: "Dashboard design project",
     description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos, and the components we need.",
-    teamMembers: 5,
-    progress: 50,
-    progressColor: "green",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
-  },
-  {
-    id: "3",
-    title: "Dashboard Design project",
-    status: "On going project",
-    description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos, and the components we need.",
-    teamMembers: 5,
-    progress: 50,
-    progressColor: "yellow",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
-  },
-  {
-    id: "4",
-    title: "Dashboard Design project",
-    status: "On going project",
-    description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos, and the components we need.",
-    teamMembers: 5,
-    progress: 50,
-    progressColor: "green",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
-  },
-  {
-    id: "5",
-    title: "Dashboard Design project",
-    status: "On going project",
-    description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos, and the components we need.",
-    teamMembers: 5,
-    progress: 50,
-    progressColor: "yellow",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
-  },
-  {
-    id: "6",
-    title: "Dashboard Design project",
-    status: "On going project",
-    description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos, and the components we need.",
-    teamMembers: 5,
+      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
     progress: 50,
     progressColor: "orange",
     startDate: "10 Jan",
     endDate: "30 Jan",
+    members: [
+      { id: "1", avatar: "OK", color: "#27acaa" },
+      { id: "2", avatar: "JD", color: "#6366f1" },
+      { id: "3", avatar: "AS", color: "#f43f5e" },
+      { id: "4", avatar: "MK", color: "#8b5cf6" },
+      { id: "5", avatar: "RL", color: "#ec4899" },
+    ],
+  },
+  {
+    id: "3",
+    title: "Dashboard design project",
+    description:
+      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
+    progress: 50,
+    progressColor: "yellow",
+    startDate: "10 Jan",
+    endDate: "30 Jan",
+    members: [
+      { id: "1", avatar: "OK", color: "#27acaa" },
+      { id: "2", avatar: "JD", color: "#6366f1" },
+      { id: "3", avatar: "AS", color: "#f43f5e" },
+    ],
+  },
+  {
+    id: "4",
+    title: "Dashboard design project",
+    description:
+      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
+    progress: 50,
+    progressColor: "blue",
+    startDate: "10 Jan",
+    endDate: "30 Jan",
+    members: [
+      { id: "1", avatar: "OK", color: "#27acaa" },
+      { id: "2", avatar: "JD", color: "#6366f1" },
+      { id: "3", avatar: "AS", color: "#f43f5e" },
+      { id: "4", avatar: "MK", color: "#8b5cf6" },
+    ],
   },
 ];
 
@@ -145,7 +138,7 @@ export default function ProjectsDashboard() {
       </div>
 
       <div className="bg-gray-50 p-4">
-        <div className="mb-4 flex items-center">
+        {/* <div className="mb-4 flex items-center">
           <button
             className="flex items-center gap-1 text-sm text-gray-600"
             onClick={() => setViewOnly(!viewOnly)}
@@ -153,9 +146,9 @@ export default function ProjectsDashboard() {
             <Eye className="h-4 w-4" />
             <span>View Only :</span>
           </button>
-        </div>
+        </div> */}
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}

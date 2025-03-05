@@ -16,7 +16,8 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       link: "Deliverable Link",
       priority: "low",
       date: "23 August 2023",
-      assignee: "OK",
+      assignee: [{ id: "1", avatar: "OK", color: "#27acaa" }],
+      project: "Project 1",
     },
     {
       id: "2",
@@ -26,7 +27,13 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       link: "Deliverable Link",
       priority: "med",
       date: "23 August 2023",
-      assignee: "OK",
+      assignee: [
+        { id: "1", avatar: "OK", color: "#27acaa" },
+        { id: "2", avatar: "JD", color: "#6366f1" },
+        { id: "3", avatar: "AS", color: "#f43f5e" },
+        { id: "4", avatar: "MK", color: "#8b5cf6" },
+      ],
+      project: "Project 2",
     },
     {
       id: "3",
@@ -36,7 +43,11 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       link: "Deliverable Link",
       priority: "low",
       date: "23 August 2023",
-      assignee: "OK",
+      assignee: [
+        { id: "1", avatar: "OK", color: "#27acaa" },
+        { id: "2", avatar: "JD", color: "#6366f1" },
+      ],
+      project: "Project 3",
     },
   ],
   inProgress: [
@@ -48,7 +59,12 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       link: "Deliverable Link",
       priority: "low",
       date: "23 August 2023",
-      assignee: "OK",
+      assignee: [
+        { id: "1", avatar: "OK", color: "#27acaa" },
+        { id: "2", avatar: "JD", color: "#6366f1" },
+        { id: "4", avatar: "MK", color: "#8b5cf6" },
+      ],
+      project: "Project 4",
     },
     {
       id: "5",
@@ -58,7 +74,11 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       link: "Deliverable Link",
       priority: "low",
       date: "23 August 2023",
-      assignee: "OK",
+      assignee: [
+        { id: "1", avatar: "OK", color: "#27acaa" },
+        { id: "2", avatar: "JD", color: "#6366f1" },
+      ],
+      project: "Project 5",
     },
   ],
   done: [
@@ -70,57 +90,20 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       link: "Deliverable Link",
       priority: "high",
       date: "23 August 2023",
-      assignee: "OK",
-    },
-  ],
-  deployed: [
-    {
-      id: "7",
-      title: "Visual design mockups",
-      description:
-        "En tant qu'administrateur, je souhaite générer des bulletins de notes pour chaque étudiant afin de fournir un rapport complet sur leurs performances académiques.",
-      link: "Deliverable Link",
-      priority: "low",
-      date: "23 August 2023",
-      assignee: "OK",
-    },
-    {
-      id: "8",
-      title: "Visual design mockups",
-      description:
-        "En tant qu'administrateur, je souhaite générer des bulletins de notes pour chaque étudiant afin de fournir un rapport complet sur leurs performances académiques.",
-      link: "Deliverable Link",
-      priority: "low",
-      date: "23 August 2023",
-      assignee: "OK",
-    },
-  ],
-  analyze: [
-    {
-      id: "9",
-      title: "Visual design mockups",
-      description:
-        "En tant qu'administrateur, je souhaite générer des bulletins de notes pour chaque étudiant afin de fournir un rapport complet sur leurs performances académiques.",
-      link: "Deliverable Link",
-      priority: "high",
-      date: "23 August 2023",
-      assignee: "OK",
-    },
-    {
-      id: "10",
-      title: "Visual design mockups",
-      description:
-        "En tant qu'administrateur, je souhaite générer des bulletins de notes pour chaque étudiant afin de fournir un rapport complet sur leurs performances académiques.",
-      link: "Deliverable Link",
-      priority: "med",
-      date: "23 August 2023",
-      assignee: "OK",
+      assignee: [
+        { id: "1", avatar: "OK", color: "#27acaa" },
+        { id: "2", avatar: "JD", color: "#6366f1" },
+        { id: "3", avatar: "AS", color: "#f43f5e" },
+        { id: "4", avatar: "MK", color: "#8b5cf6" },
+      ],
+      project: "Project 6",
     },
   ],
 };
 
 export default function DeliverablesDashboard() {
   const [deliverables, setDeliverables] = useState(sampleDeliverables);
+  const [activeTab, setActiveTab] = useState("myDeliverables");
 
   return (
     <div className="h-full">
@@ -155,7 +138,32 @@ export default function DeliverablesDashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-5 gap-4 overflow-auto pb-6">
+      <div className="mb-4 border-b border-gray-200">
+        <div className="flex gap-6">
+          <button
+            className={`border-b-2 px-1 py-2 text-sm font-medium ${
+              activeTab === "myDeliverables"
+                ? "border-[#27acaa] text-[#444444]"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+            onClick={() => setActiveTab("myDeliverables")}
+          >
+            My Deliverables
+          </button>
+          <button
+            className={`border-b-2 px-1 py-2 text-sm font-medium ${
+              activeTab === "others"
+                ? "border-[#27acaa] text-[#444444]"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+            onClick={() => setActiveTab("others")}
+          >
+            Others
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-6 bg-gray-50 p-4">
         <DeliverableColumn
           title="To Do"
           count={deliverables.todo.length}
@@ -173,18 +181,6 @@ export default function DeliverablesDashboard() {
           count={deliverables.done.length}
           total={7}
           deliverables={deliverables.done}
-        />
-        <DeliverableColumn
-          title="Deployed"
-          count={deliverables.deployed.length}
-          total={7}
-          deliverables={deliverables.deployed}
-        />
-        <DeliverableColumn
-          title="Analyze"
-          count={deliverables.analyze.length}
-          total={7}
-          deliverables={deliverables.analyze}
         />
       </div>
     </div>

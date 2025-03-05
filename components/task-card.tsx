@@ -21,6 +21,12 @@ export default function TaskCard({ task }: TaskCardProps) {
       <div className="mb-3">
         <p className="text-sm text-[#444444]">{task.text}</p>
       </div>
+      <div className="mb-4">
+        <span className="text-xs text-gray-500">
+          <strong className="font-medium text-[#444444]">Project:</strong>{" "}
+          {task.project}
+        </span>
+      </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span

@@ -7,6 +7,7 @@ import {
   FileText,
   CheckSquare,
   LogOut,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,7 +17,8 @@ const navItems = [
   { icon: Calendar, label: "Schedule", href: "/schedule" },
   { icon: FolderKanban, label: "Projects", href: "/projects" },
   { icon: FileText, label: "Deliverables", href: "/deliverables" },
-  { icon: CheckSquare, label: "Tasks", href: "/tasks" }, // Changed from "/dashboard" to "/tasks"
+  { icon: CheckSquare, label: "Tasks", href: "/tasks" },
+  { icon: Users, label: "Users", href: "/users" },
 ];
 
 export default function Sidebar() {

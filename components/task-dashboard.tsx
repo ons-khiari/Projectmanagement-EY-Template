@@ -14,6 +14,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "low",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
     {
       id: "2",
@@ -21,6 +22,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "med",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
     {
       id: "3",
@@ -28,6 +30,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "high",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
     {
       id: "4",
@@ -35,6 +38,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "low",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
   ],
   inProgress: [
@@ -44,6 +48,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "low",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
     {
       id: "6",
@@ -51,6 +56,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "med",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
   ],
   done: [
@@ -60,6 +66,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "low",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
     {
       id: "8",
@@ -67,6 +74,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "low",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
     {
       id: "9",
@@ -74,6 +82,7 @@ const sampleTasks: Record<string, Task[]> = {
       priority: "low",
       date: "23 August 2023",
       assignee: "OK",
+      project: "Project 6",
     },
   ],
 };
@@ -140,7 +149,7 @@ export default function TaskDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-6 bg-gray-50 p-4">
         <TaskColumn
           title="To Do"
           count={tasks.todo.length}

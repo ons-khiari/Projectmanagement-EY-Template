@@ -19,16 +19,12 @@ export default function DeliverableCard({ deliverable }: DeliverableCardProps) {
     deliverable.priority.slice(1);
 
   return (
-    <div
-      className={`rounded-md border border-gray-200 bg-white p-3 shadow-sm ${
-        priorityColors[deliverable.priority as keyof typeof priorityColors]
-      }`}
-    >
+    <div className="rounded-md border border-gray-200 bg-white p-3 shadow-sm">
       <div className="mb-2">
         <h4 className="font-medium text-[#444444]">{deliverable.title}</h4>
       </div>
       <div className="mb-3">
-        <p className="text-xs text-gray-600">{deliverable.description}</p>
+        <p className="text-sm text-gray-500">{deliverable.description}</p>
       </div>
       <div className="mb-3">
         <a
@@ -39,6 +35,13 @@ export default function DeliverableCard({ deliverable }: DeliverableCardProps) {
           {deliverable.link}
         </a>
       </div>
+      <div className="mb-4">
+        <span className="text-xs text-gray-500">
+          <strong className="font-medium text-[#444444]">Project:</strong>{" "}
+          {deliverable.project}
+        </span>
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span
@@ -53,8 +56,16 @@ export default function DeliverableCard({ deliverable }: DeliverableCardProps) {
           </span>
           <span className="text-xs text-gray-500">{deliverable.date}</span>
         </div>
-        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#27acaa] text-xs text-white">
-          {deliverable.assignee}
+        <div className="flex -space-x-2">
+          {deliverable.assignee.map((assignee) => (
+            <div
+              key={assignee.id}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-xs text-white"
+              style={{ backgroundColor: assignee.color }}
+            >
+              {assignee.avatar}
+            </div>
+          ))}
         </div>
       </div>
     </div>

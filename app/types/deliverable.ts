@@ -5,5 +5,10 @@ export interface Deliverable {
   link: string;
   priority: string;
   date: string;
-  assignee: string;
+  assignee: {
+    id: string;
+    avatar: string;
+    color: string;
+  }[];
+  project: string;
 }
