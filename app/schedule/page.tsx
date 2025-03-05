@@ -1,4 +1,4 @@
-import ScheduleDashboard from "@/components/schedule-dashboard";
+import ScheduleDashboard from "@/components/schedule/schedule-dashboard";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 

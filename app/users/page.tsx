@@ -1,4 +1,4 @@
-import UsersDashboard from "@/components/users-dashboard";
+import UsersDashboard from "@/components/users/users-dashboard";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 

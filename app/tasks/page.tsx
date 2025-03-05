@@ -1,4 +1,4 @@
-import TaskDashboard from "@/components/task-dashboard";
+import TaskDashboard from "@/components/task/task-dashboard";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 

@@ -1,4 +1,4 @@
-import ProjectsDashboard from "@/components/projects-dashboard";
+import ProjectsDashboard from "@/components/project/projects-dashboard";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 

@@ -1,4 +1,4 @@
-import DeliverablesDashboard from "@/components/deliverables-dashboard";
+import DeliverablesDashboard from "@/components/deliverable/deliverables-dashboard";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 
