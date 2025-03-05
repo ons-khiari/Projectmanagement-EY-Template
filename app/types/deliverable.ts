@@ -3,12 +3,13 @@ export interface Deliverable {
   title: string;
   description: string;
   link: string;
-  priority: string;
+  project: string;
+  priority: "low" | "med" | "high";
+  priority_number: number;
   date: string;
   assignee: {
     id: string;
     avatar: string;
     color: string;
   }[];
-  project: string;
 }

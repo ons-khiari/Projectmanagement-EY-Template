@@ -1,11 +1,27 @@
 import type { Deliverable } from "@/app/types/deliverable";
 import { Link2 } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface DeliverableCardProps {
   deliverable: Deliverable;
+  index: number;
+  isDragging?: boolean;
 }
 
-export default function DeliverableCard({ deliverable }: DeliverableCardProps) {
+export default function DeliverableCard({
+  deliverable,
+  index,
+  isDragging = false,
+}: DeliverableCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: deliverable.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   // Priority colors
   const priorityColors = {
     low: "bg-blue-100 text-blue-800 border-l-4 border-blue-500",
@@ -19,8 +35,24 @@ export default function DeliverableCard({ deliverable }: DeliverableCardProps) {
     deliverable.priority.slice(1);
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white p-3 shadow-sm">
-      <div className="mb-2">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`rounded-md border border-gray-200 bg-white p-3 shadow-sm relative cursor-grab active:cursor-grabbing ${
+        isDragging ? "opacity-50" : ""
+      }`}
+    >
+      {/* Ribbon badge */}
+      <div className="absolute -top-0.5 -left-0.5 w-8 h-12 overflow-hidden">
+        <div className="absolute top-0 left-0 w-8 h-10 bg-[#ffe500] flex items-center justify-center font-bold text-[#444444]">
+          D{deliverable.priority_number}
+        </div>
+        <div className="absolute bottom-0 left-0 w-0 h-0 border-l-4 border-r-4 border-t-[8px] border-l-transparent border-r-transparent border-t-[#ffe500]"></div>
+      </div>
+
+      <div className="mb-2 pl-7">
         <h4 className="font-medium text-[#444444]">{deliverable.title}</h4>
       </div>
       <div className="mb-3">
