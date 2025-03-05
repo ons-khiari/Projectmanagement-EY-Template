@@ -17,6 +17,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import TaskCard from "./task-card";
+import { TaskDetails } from "./task-details";
 
 // Sample task data
 const sampleTasks: Record<string, Task[]> = {
@@ -105,6 +106,7 @@ export default function TaskDashboard() {
   const [tasks, setTasks] = useState(sampleTasks);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   // Configure sensors for drag detection
   const sensors = useSensors(
@@ -242,6 +244,11 @@ export default function TaskDashboard() {
     }
   };
 
+  // Handle task selection
+  const handleTaskSelect = (task: Task) => {
+    setSelectedTask(task);
+  };
+
   return (
     <div className="h-full">
       <div className="mb-6 flex items-center justify-between">
@@ -314,6 +321,7 @@ export default function TaskDashboard() {
             total={7}
             tasks={tasks.todo}
             id="todo"
+            onTaskSelect={handleTaskSelect}
           />
           <TaskColumn
             title="In progress"
@@ -321,6 +329,7 @@ export default function TaskDashboard() {
             total={7}
             tasks={tasks.inProgress}
             id="inProgress"
+            onTaskSelect={handleTaskSelect}
           />
           <TaskColumn
             title="Done"
@@ -328,6 +337,7 @@ export default function TaskDashboard() {
             total={7}
             tasks={tasks.done}
             id="done"
+            onTaskSelect={handleTaskSelect}
           />
         </div>
 
@@ -340,6 +350,13 @@ export default function TaskDashboard() {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {/* Task Details Panel */}
+      <TaskDetails
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ interface TaskColumnProps {
   total: number;
   tasks: Task[];
   id: string; // Column ID for drag and drop
+  onTaskSelect?: (task: Task) => void;
 }
 
 export default function TaskColumn({
@@ -20,6 +21,7 @@ export default function TaskColumn({
   total,
   tasks,
   id,
+  onTaskSelect,
 }: TaskColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id,
@@ -44,7 +46,12 @@ export default function TaskColumn({
           strategy={verticalListSortingStrategy}
         >
           {tasks.map((task, index) => (
-            <TaskCard key={task.id} task={task} index={index} />
+            <TaskCard
+              key={task.id}
+              task={task}
+              index={index}
+              onSelect={onTaskSelect}
+            />
           ))}
         </SortableContext>
         {tasks.length === 0 && (
