@@ -4,6 +4,19 @@ import { useState } from "react";
 import { Search, Edit, Settings, Plus } from "lucide-react";
 import TaskColumn from "./task-column";
 import type { Task } from "@/app/types/task";
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import TaskCard from "./task-card";
 
 // Sample task data
 const sampleTasks: Record<string, Task[]> = {
@@ -90,6 +103,144 @@ const sampleTasks: Record<string, Task[]> = {
 export default function TaskDashboard() {
   const [activeTab, setActiveTab] = useState("myTasks");
   const [tasks, setTasks] = useState(sampleTasks);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+  // Configure sensors for drag detection
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Find the container and index of an item
+  const findContainer = (id: string) => {
+    if (id in tasks) return id;
+
+    const container = Object.keys(tasks).find((key) =>
+      tasks[key].some((item) => item.id === id)
+    );
+
+    return container || null;
+  };
+
+  // Handle drag start
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const id = active.id as string;
+    const container = findContainer(id);
+
+    if (container) {
+      const index = tasks[container].findIndex((item) => item.id === id);
+      if (index !== -1) {
+        setActiveId(id);
+        setActiveTask(tasks[container][index]);
+      }
+    }
+  };
+
+  // Handle drag end
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) {
+      setActiveId(null);
+      setActiveTask(null);
+      return;
+    }
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    if (activeId === overId) {
+      setActiveId(null);
+      setActiveTask(null);
+      return;
+    }
+
+    const activeContainer = findContainer(activeId);
+    const overContainer = findContainer(overId);
+
+    if (!activeContainer || !overContainer) {
+      setActiveId(null);
+      setActiveTask(null);
+      return;
+    }
+
+    // Find the indexes of the active and over items
+    const activeIndex = tasks[activeContainer].findIndex(
+      (item) => item.id === activeId
+    );
+    const overIndex = tasks[overContainer].findIndex(
+      (item) => item.id === overId
+    );
+
+    // If items are in the same container, reorder
+    if (activeContainer === overContainer) {
+      const newItems = [...tasks[activeContainer]];
+      const reorderedItems = arrayMove(newItems, activeIndex, overIndex);
+
+      setTasks({
+        ...tasks,
+        [activeContainer]: reorderedItems,
+      });
+    }
+    // If items are in different containers, move from one to another
+    else {
+      const activeItems = [...tasks[activeContainer]];
+      const overItems = [...tasks[overContainer]];
+      const [item] = activeItems.splice(activeIndex, 1);
+
+      // Insert into the new container
+      overItems.splice(overIndex, 0, item);
+
+      setTasks({
+        ...tasks,
+        [activeContainer]: activeItems,
+        [overContainer]: overItems,
+      });
+    }
+
+    setActiveId(null);
+    setActiveTask(null);
+  };
+
+  // Handle drag over - for dropping into empty containers
+  const handleDragOver = (event: any) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    if (activeId === overId) return;
+
+    const activeContainer = findContainer(activeId);
+    const overContainer = findContainer(overId);
+
+    if (!activeContainer || !overContainer || activeContainer === overContainer)
+      return;
+
+    // Check if we're dropping directly onto a container
+    if (overId === "todo" || overId === "inProgress" || overId === "done") {
+      const activeItems = [...tasks[activeContainer]];
+      const overItems = [...tasks[overContainer]];
+      const activeIndex = activeItems.findIndex((item) => item.id === activeId);
+
+      if (activeIndex !== -1) {
+        const [item] = activeItems.splice(activeIndex, 1);
+        overItems.push(item);
+
+        setTasks({
+          ...tasks,
+          [activeContainer]: activeItems,
+          [overContainer]: overItems,
+        });
+      }
+    }
+  };
 
   return (
     <div className="h-full">
@@ -149,26 +300,46 @@ export default function TaskDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6 bg-gray-50 p-4">
-        <TaskColumn
-          title="To Do"
-          count={tasks.todo.length}
-          total={7}
-          tasks={tasks.todo}
-        />
-        <TaskColumn
-          title="In progress"
-          count={tasks.inProgress.length}
-          total={7}
-          tasks={tasks.inProgress}
-        />
-        <TaskColumn
-          title="Done"
-          count={tasks.done.length}
-          total={7}
-          tasks={tasks.done}
-        />
-      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragOver={handleDragOver}
+      >
+        <div className="grid grid-cols-3 gap-6 bg-gray-50 p-4">
+          <TaskColumn
+            title="To Do"
+            count={tasks.todo.length}
+            total={7}
+            tasks={tasks.todo}
+            id="todo"
+          />
+          <TaskColumn
+            title="In progress"
+            count={tasks.inProgress.length}
+            total={7}
+            tasks={tasks.inProgress}
+            id="inProgress"
+          />
+          <TaskColumn
+            title="Done"
+            count={tasks.done.length}
+            total={7}
+            tasks={tasks.done}
+            id="done"
+          />
+        </div>
+
+        {/* Drag overlay for visual feedback */}
+        <DragOverlay>
+          {activeId && activeTask ? (
+            <div className="opacity-80">
+              <TaskCard task={activeTask} index={0} isDragging={true} />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 }

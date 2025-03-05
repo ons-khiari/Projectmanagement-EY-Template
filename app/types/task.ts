@@ -1,7 +1,7 @@
 export interface Task {
   id: string;
   text: string;
-  priority: string;
+  priority: "low" | "med" | "high";
   date: string;
   assignee: string;
   project: string;
