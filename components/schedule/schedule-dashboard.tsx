@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Edit,
@@ -9,14 +9,16 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarIcon,
-  Info,
-  X,
 } from "lucide-react";
 import ImprovedMonthlyCalendar from "./monthly-calendar";
 import WeeklyCalendar from "./weekly-calendar";
 import DailyCalendar from "./daily-calendar";
 import type { DeliverablePhase } from "@/app/types/deliverable-phase";
 import { months } from "@/app/utils/months";
+import {
+  ScheduleFilterBar,
+  type ScheduleFilterState,
+} from "./schedule-filter";
 
 // Sample deliverable phase data with more variety
 const sampleDeliverablePhases: DeliverablePhase[] = [
@@ -88,7 +90,51 @@ export default function ImprovedScheduleDashboard() {
   const [deliverablePhases, setDeliverablePhases] = useState(
     sampleDeliverablePhases
   );
+  const [filteredDeliverablePhases, setFilteredDeliverablePhases] = useState(
+    sampleDeliverablePhases
+  );
   const [showHelp, setShowHelp] = useState(true);
+  const [filters, setFilters] = useState<ScheduleFilterState>({
+    startDate: null,
+    endDate: null,
+  });
+
+  // Apply filters to deliverable phases
+  useEffect(() => {
+    const newFilteredPhases = deliverablePhases.filter((phase) => {
+      // Filter by start date
+      if (filters.startDate) {
+        // Convert both dates to midnight for date-only comparison
+        const filterStartDate = new Date(filters.startDate);
+        filterStartDate.setHours(0, 0, 0, 0);
+
+        const phaseStartDate = new Date(phase.startDate);
+        phaseStartDate.setHours(0, 0, 0, 0);
+
+        if (phaseStartDate < filterStartDate) {
+          return false;
+        }
+      }
+
+      // Filter by end date
+      if (filters.endDate) {
+        // Convert both dates to midnight for date-only comparison
+        const filterEndDate = new Date(filters.endDate);
+        filterEndDate.setHours(23, 59, 59, 999);
+
+        const phaseEndDate = new Date(phase.endDate);
+        phaseEndDate.setHours(23, 59, 59, 999);
+
+        if (phaseEndDate > filterEndDate) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    setFilteredDeliverablePhases(newFilteredPhases);
+  }, [deliverablePhases, filters]);
 
   // Calculate the number of weeks in the current month
   const getWeeksInMonth = () => {
@@ -213,6 +259,11 @@ export default function ImprovedScheduleDashboard() {
     setShowHelp(false);
   };
 
+  // Handle filter changes
+  const handleFilterChange = (newFilters: ScheduleFilterState) => {
+    setFilters(newFilters);
+  };
+
   // Get the current view title
   const getCurrentViewTitle = () => {
     if (viewMode === "monthly") {
@@ -295,6 +346,9 @@ export default function ImprovedScheduleDashboard() {
         </button>
       </div>
 
+      {/* Filter Bar */}
+      <ScheduleFilterBar onFilterChange={handleFilterChange} />
+
       {/* View mode tabs */}
       <div className="mb-4 border-b border-gray-200">
         <div className="flex gap-6">
@@ -359,53 +413,13 @@ export default function ImprovedScheduleDashboard() {
         </button>
       </div>
 
-      {/* Help tooltip */}
-      {/* {showHelp && (
-        <div className="relative mb-4">
-          <div className="rounded-lg bg-blue-50 p-3 pr-10 text-sm text-blue-800">
-            <div className="flex items-start">
-              <Info className="mr-2 h-5 w-5 flex-shrink-0 text-blue-500" />
-              <div>
-                <p className="font-medium">Pro Tip:</p>
-                {viewMode === "monthly" && (
-                  <p>
-                    When you see "+X more" on a day, click it to view all
-                    deliverable phases for that day. Hover over any phase to
-                    highlight it across the calendar.
-                  </p>
-                )}
-                {viewMode === "weekly" && (
-                  <p>
-                    Click on any phase to expand and see more details. Hover
-                    over a phase to highlight it across the week. Note that
-                    weekends are non-working days.
-                  </p>
-                )}
-                {viewMode === "daily" && (
-                  <p>
-                    View detailed information about all deliverable phases for
-                    this day. Hover over a phase to highlight it.
-                  </p>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={closeHelp}
-              className="absolute right-2 top-2 rounded-full p-1 text-blue-500 hover:bg-blue-100"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      )} */}
-
       {/* Calendar */}
       <div className="overflow-auto rounded-lg bg-white shadow-sm">
         {viewMode === "monthly" && (
           <ImprovedMonthlyCalendar
             year={currentYear}
             month={currentMonth}
-            deliverablePhases={deliverablePhases}
+            deliverablePhases={filteredDeliverablePhases}
           />
         )}
         {viewMode === "weekly" && (
@@ -413,7 +427,7 @@ export default function ImprovedScheduleDashboard() {
             year={currentYear}
             month={currentMonth}
             week={currentWeek}
-            deliverablePhases={deliverablePhases}
+            deliverablePhases={filteredDeliverablePhases}
           />
         )}
         {viewMode === "daily" && (
@@ -421,7 +435,7 @@ export default function ImprovedScheduleDashboard() {
             year={currentYear}
             month={currentMonth}
             day={currentDay}
-            deliverablePhases={deliverablePhases}
+            deliverablePhases={filteredDeliverablePhases}
           />
         )}
       </div>
