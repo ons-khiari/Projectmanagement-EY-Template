@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Edit, Settings, Plus } from "lucide-react";
 import TaskColumn from "./task-column";
 import type { Task } from "@/app/types/task";
@@ -18,6 +18,10 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import TaskCard from "./task-card";
 import { TaskDetails } from "./task-details";
+import {
+  TaskFilterBar,
+  type TaskFilterState,
+} from "./task-filter";
 
 // Sample task data
 const sampleTasks: Record<string, Task[]> = {
@@ -29,6 +33,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
     {
       id: "2",
@@ -37,6 +43,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
     {
       id: "3",
@@ -45,6 +53,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
     {
       id: "4",
@@ -53,6 +63,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
   ],
   inProgress: [
@@ -63,6 +75,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
     {
       id: "6",
@@ -71,6 +85,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
   ],
   done: [
@@ -81,6 +97,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
     {
       id: "8",
@@ -89,6 +107,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
     {
       id: "9",
@@ -97,6 +117,8 @@ const sampleTasks: Record<string, Task[]> = {
       date: "23 August 2023",
       assignee: "OK",
       project: "Project 6",
+      deliverable: "Deliverable 1",
+      deliverablePhase: "Phase 1",
     },
   ],
 };
@@ -104,9 +126,18 @@ const sampleTasks: Record<string, Task[]> = {
 export default function TaskDashboard() {
   const [activeTab, setActiveTab] = useState("myTasks");
   const [tasks, setTasks] = useState(sampleTasks);
+  const [filteredTasks, setFilteredTasks] = useState(sampleTasks);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [filters, setFilters] = useState<TaskFilterState>({
+    assignee: null,
+    project: null,
+    deliverable: null,
+    deliverablePhase: null,
+    date: null,
+    priority: null,
+  });
 
   // Configure sensors for drag detection
   const sensors = useSensors(
@@ -116,12 +147,68 @@ export default function TaskDashboard() {
     })
   );
 
+  // Apply filters to tasks
+  useEffect(() => {
+    const newFilteredTasks: Record<string, Task[]> = {};
+
+    Object.keys(tasks).forEach((column) => {
+      newFilteredTasks[column] = tasks[column].filter((task) => {
+        // Filter by assignee
+        if (filters.assignee && task.assignee !== filters.assignee) {
+          return false;
+        }
+
+        // Filter by project
+        if (filters.project && task.project !== filters.project) {
+          return false;
+        }
+
+        // Filter by deliverable
+        if (filters.deliverable && task.deliverable !== filters.deliverable) {
+          return false;
+        }
+
+        // Filter by deliverable phase
+        if (
+          filters.deliverablePhase &&
+          task.deliverablePhase !== filters.deliverablePhase
+        ) {
+          return false;
+        }
+
+        // Filter by priority
+        if (filters.priority && task.priority !== filters.priority) {
+          return false;
+        }
+
+        // Filter by date
+        if (filters.date) {
+          const taskDate = new Date(task.date);
+          const filterDate = new Date(filters.date);
+
+          // Compare only year, month, and day
+          if (
+            taskDate.getFullYear() !== filterDate.getFullYear() ||
+            taskDate.getMonth() !== filterDate.getMonth() ||
+            taskDate.getDate() !== filterDate.getDate()
+          ) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    });
+
+    setFilteredTasks(newFilteredTasks);
+  }, [tasks, filters]);
+
   // Find the container and index of an item
   const findContainer = (id: string) => {
-    if (id in tasks) return id;
+    if (id in filteredTasks) return id;
 
-    const container = Object.keys(tasks).find((key) =>
-      tasks[key].some((item) => item.id === id)
+    const container = Object.keys(filteredTasks).find((key) =>
+      filteredTasks[key].some((item) => item.id === id)
     );
 
     return container || null;
@@ -134,10 +221,12 @@ export default function TaskDashboard() {
     const container = findContainer(id);
 
     if (container) {
-      const index = tasks[container].findIndex((item) => item.id === id);
+      const index = filteredTasks[container].findIndex(
+        (item) => item.id === id
+      );
       if (index !== -1) {
         setActiveId(id);
-        setActiveTask(tasks[container][index]);
+        setActiveTask(filteredTasks[container][index]);
       }
     }
   };
@@ -171,10 +260,10 @@ export default function TaskDashboard() {
     }
 
     // Find the indexes of the active and over items
-    const activeIndex = tasks[activeContainer].findIndex(
+    const activeIndex = filteredTasks[activeContainer].findIndex(
       (item) => item.id === activeId
     );
-    const overIndex = tasks[overContainer].findIndex(
+    const overIndex = filteredTasks[overContainer].findIndex(
       (item) => item.id === overId
     );
 
@@ -249,6 +338,11 @@ export default function TaskDashboard() {
     setSelectedTask(task);
   };
 
+  // Handle filter changes
+  const handleFilterChange = (newFilters: TaskFilterState) => {
+    setFilters(newFilters);
+  };
+
   return (
     <div className="h-full">
       <div className="mb-6 flex items-center justify-between">
@@ -281,6 +375,9 @@ export default function TaskDashboard() {
           <span>Add Task</span>
         </button>
       </div>
+
+      {/* Filter Bar */}
+      <TaskFilterBar onFilterChange={handleFilterChange} />
 
       <div className="mb-4 border-b border-gray-200">
         <div className="flex gap-6">
@@ -317,25 +414,25 @@ export default function TaskDashboard() {
         <div className="grid grid-cols-3 gap-6 bg-gray-50 p-4">
           <TaskColumn
             title="To Do"
-            count={tasks.todo.length}
-            total={7}
-            tasks={tasks.todo}
+            count={filteredTasks.todo.length}
+            total={tasks.todo.length}
+            tasks={filteredTasks.todo}
             id="todo"
             onTaskSelect={handleTaskSelect}
           />
           <TaskColumn
             title="In progress"
-            count={tasks.inProgress.length}
-            total={7}
-            tasks={tasks.inProgress}
+            count={filteredTasks.inProgress.length}
+            total={tasks.inProgress.length}
+            tasks={filteredTasks.inProgress}
             id="inProgress"
             onTaskSelect={handleTaskSelect}
           />
           <TaskColumn
             title="Done"
-            count={tasks.done.length}
-            total={7}
-            tasks={tasks.done}
+            count={filteredTasks.done.length}
+            total={tasks.done.length}
+            tasks={filteredTasks.done}
             id="done"
             onTaskSelect={handleTaskSelect}
           />

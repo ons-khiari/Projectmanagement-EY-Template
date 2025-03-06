@@ -1,3 +1,5 @@
+"use client";
+
 import type { Task } from "@/app/types/task";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";

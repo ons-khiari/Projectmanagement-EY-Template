@@ -113,6 +113,31 @@ export function TaskDetails({ task, isOpen, onClose }: TaskDetailsProps) {
                   Low
                 </div>
               </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Project</span>
+                <span className="text-sm">
+                  {task.project || "Not assigned"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">
+                  Deliverable
+                </span>
+                <span className="text-sm">
+                  {task.deliverable || "Not assigned"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">
+                  Deliverable Phase
+                </span>
+                <span className="text-sm">
+                  {task.deliverablePhase || "Not assigned"}
+                </span>
+              </div>
             </div>
           </div>
 

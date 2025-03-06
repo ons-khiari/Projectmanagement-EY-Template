@@ -65,7 +65,7 @@ export default function LoginForm() {
       console.log("Login attempt with:", { email, password });
 
       // Redirect after successful login
-      router.push("/tasks");
+      router.push("/dashboard");
     } catch (error) {
       setErrorMessage("Invalid email or password. Please try again.");
       console.error("Login error:", error);

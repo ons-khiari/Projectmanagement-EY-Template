@@ -5,4 +5,6 @@ export interface Task {
   date: string;
   assignee: string;
   project: string;
+  deliverable?: string;
+  deliverablePhase?: string;
 }
