@@ -12,4 +12,5 @@ export interface Deliverable {
     avatar: string;
     color: string;
   }[];
+  deliverablePhase?: string;
 }

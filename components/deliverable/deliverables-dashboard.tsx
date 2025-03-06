@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Edit, Settings, Plus } from "lucide-react";
 import DeliverableColumn from "./deliverable-column";
 import type { Deliverable } from "@/app/types/deliverable";
@@ -17,6 +17,10 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import DeliverableCard from "./deliverable-card";
+import {
+  DeliverableFilterBar,
+  type DeliverableFilterState,
+} from "./deliverable-filter";
 
 // Sample deliverable data
 const sampleDeliverables: Record<string, Deliverable[]> = {
@@ -32,6 +36,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       date: "23 August 2023",
       assignee: [{ id: "1", avatar: "OK", color: "#27acaa" }],
       project: "Project 1",
+      deliverablePhase: "Phase 1",
     },
     {
       id: "2",
@@ -49,6 +54,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
         { id: "4", avatar: "MK", color: "#8b5cf6" },
       ],
       project: "Project 2",
+      deliverablePhase: "Phase 2",
     },
     {
       id: "3",
@@ -64,6 +70,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
         { id: "2", avatar: "JD", color: "#6366f1" },
       ],
       project: "Project 3",
+      deliverablePhase: "Phase 1",
     },
   ],
   inProgress: [
@@ -82,6 +89,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
         { id: "4", avatar: "MK", color: "#8b5cf6" },
       ],
       project: "Project 4",
+      deliverablePhase: "Phase 3",
     },
     {
       id: "5",
@@ -97,6 +105,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
         { id: "2", avatar: "JD", color: "#6366f1" },
       ],
       project: "Project 5",
+      deliverablePhase: "Phase 2",
     },
   ],
   done: [
@@ -116,16 +125,27 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
         { id: "4", avatar: "MK", color: "#8b5cf6" },
       ],
       project: "Project 6",
+      deliverablePhase: "Phase 3",
     },
   ],
 };
 
 export default function DeliverablesDashboard() {
   const [deliverables, setDeliverables] = useState(sampleDeliverables);
+  const [filteredDeliverables, setFilteredDeliverables] =
+    useState(sampleDeliverables);
   const [activeTab, setActiveTab] = useState("myDeliverables");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeDeliverable, setActiveDeliverable] =
     useState<Deliverable | null>(null);
+  const [filters, setFilters] = useState<DeliverableFilterState>({
+    assignees: null,
+    project: null,
+    deliverablePhase: null,
+    priority: null,
+    priorityNumber: null,
+    date: null,
+  });
 
   // Configure sensors for drag detection
   const sensors = useSensors(
@@ -135,12 +155,78 @@ export default function DeliverablesDashboard() {
     })
   );
 
+  // Apply filters to deliverables
+  useEffect(() => {
+    const newFilteredDeliverables: Record<string, Deliverable[]> = {};
+
+    Object.keys(deliverables).forEach((column) => {
+      newFilteredDeliverables[column] = deliverables[column].filter(
+        (deliverable) => {
+          // Filter by assignees (multi-select)
+          if (filters.assignees && filters.assignees.length > 0) {
+            const assigneeAvatars = deliverable.assignee.map((a) => a.avatar);
+            // Check if any of the selected assignees are in this deliverable
+            const hasMatchingAssignee = filters.assignees.some((a) =>
+              assigneeAvatars.includes(a)
+            );
+            if (!hasMatchingAssignee) return false;
+          }
+
+          // Filter by project
+          if (filters.project && deliverable.project !== filters.project) {
+            return false;
+          }
+
+          // Filter by deliverable phase
+          if (
+            filters.deliverablePhase &&
+            deliverable.deliverablePhase !== filters.deliverablePhase
+          ) {
+            return false;
+          }
+
+          // Filter by priority
+          if (filters.priority && deliverable.priority !== filters.priority) {
+            return false;
+          }
+
+          // Filter by priority number
+          if (
+            filters.priorityNumber &&
+            deliverable.priority_number !== filters.priorityNumber
+          ) {
+            return false;
+          }
+
+          // Filter by date
+          if (filters.date) {
+            const deliverableDate = new Date(deliverable.date);
+            const filterDate = new Date(filters.date);
+
+            // Compare only year, month, and day
+            if (
+              deliverableDate.getFullYear() !== filterDate.getFullYear() ||
+              deliverableDate.getMonth() !== filterDate.getMonth() ||
+              deliverableDate.getDate() !== filterDate.getDate()
+            ) {
+              return false;
+            }
+          }
+
+          return true;
+        }
+      );
+    });
+
+    setFilteredDeliverables(newFilteredDeliverables);
+  }, [deliverables, filters]);
+
   // Find the container and index of an item
   const findContainer = (id: string) => {
-    if (id in deliverables) return id;
+    if (id in filteredDeliverables) return id;
 
-    const container = Object.keys(deliverables).find((key) =>
-      deliverables[key].some((item) => item.id === id)
+    const container = Object.keys(filteredDeliverables).find((key) =>
+      filteredDeliverables[key].some((item) => item.id === id)
     );
 
     return container || null;
@@ -153,10 +239,12 @@ export default function DeliverablesDashboard() {
     const container = findContainer(id);
 
     if (container) {
-      const index = deliverables[container].findIndex((item) => item.id === id);
+      const index = filteredDeliverables[container].findIndex(
+        (item) => item.id === id
+      );
       if (index !== -1) {
         setActiveId(id);
-        setActiveDeliverable(deliverables[container][index]);
+        setActiveDeliverable(filteredDeliverables[container][index]);
       }
     }
   };
@@ -190,10 +278,10 @@ export default function DeliverablesDashboard() {
     }
 
     // Find the indexes of the active and over items
-    const activeIndex = deliverables[activeContainer].findIndex(
+    const activeIndex = filteredDeliverables[activeContainer].findIndex(
       (item) => item.id === activeId
     );
-    const overIndex = deliverables[overContainer].findIndex(
+    const overIndex = filteredDeliverables[overContainer].findIndex(
       (item) => item.id === overId
     );
 
@@ -263,6 +351,11 @@ export default function DeliverablesDashboard() {
     }
   };
 
+  // Handle filter changes
+  const handleFilterChange = (newFilters: DeliverableFilterState) => {
+    setFilters(newFilters);
+  };
+
   return (
     <div className="h-full">
       <div className="mb-6 flex items-center justify-between">
@@ -295,6 +388,9 @@ export default function DeliverablesDashboard() {
           <span>Add deliverable</span>
         </button>
       </div>
+
+      {/* Filter Bar */}
+      <DeliverableFilterBar onFilterChange={handleFilterChange} />
 
       <div className="mb-4 border-b border-gray-200">
         <div className="flex gap-6">
@@ -331,23 +427,23 @@ export default function DeliverablesDashboard() {
         <div className="grid grid-cols-3 gap-6 bg-gray-50 p-4">
           <DeliverableColumn
             title="To Do"
-            count={deliverables.todo.length}
-            total={7}
-            deliverables={deliverables.todo}
+            count={filteredDeliverables.todo.length}
+            total={deliverables.todo.length}
+            deliverables={filteredDeliverables.todo}
             id="todo"
           />
           <DeliverableColumn
             title="In progress"
-            count={deliverables.inProgress.length}
-            total={7}
-            deliverables={deliverables.inProgress}
+            count={filteredDeliverables.inProgress.length}
+            total={deliverables.inProgress.length}
+            deliverables={filteredDeliverables.inProgress}
             id="inProgress"
           />
           <DeliverableColumn
             title="Done"
-            count={deliverables.done.length}
-            total={7}
-            deliverables={deliverables.done}
+            count={filteredDeliverables.done.length}
+            total={deliverables.done.length}
+            deliverables={filteredDeliverables.done}
             id="done"
           />
         </div>
