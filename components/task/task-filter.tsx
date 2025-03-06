@@ -251,7 +251,7 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
         <Button
           variant="outline"
           size="sm"
-          className="h-9 border-gray-200 text-black hover:bg-gray-100"
+          className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-black"
           onClick={handleApplyFilters}
         >
           <Filter className="h-4 w-4 mr-1" />
@@ -260,7 +260,7 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
         <Button
           variant="outline"
           size="sm"
-          className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100"
+          className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-black"
           onClick={handleClearFilters}
         >
           Clear
