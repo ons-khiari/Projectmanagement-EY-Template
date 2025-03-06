@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Edit, Settings, Plus, Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Edit, Settings, Plus } from "lucide-react";
 import ProjectCard from "./project-card";
 import type { Project } from "@/app/types/project";
+import {
+  ProjectFilterBar,
+  type ProjectFilterState,
+} from "./project-filter";
 
 // Sample project data with different progress bar colors
 const sampleProjects: Project[] = [
@@ -14,8 +18,8 @@ const sampleProjects: Project[] = [
       "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
     progress: 50,
     progressColor: "blue",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
+    startDate: "10 Jan 2023",
+    endDate: "30 Jan 2023",
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -26,13 +30,13 @@ const sampleProjects: Project[] = [
   },
   {
     id: "2",
-    title: "Dashboard design project",
+    title: "Mobile app development",
     description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
-    progress: 50,
+      "Developing a mobile application for both iOS and Android platforms. The team will handle UI/UX design, development, and testing phases.",
+    progress: 75,
     progressColor: "orange",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
+    startDate: "15 Feb 2023",
+    endDate: "30 Apr 2023",
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -43,13 +47,13 @@ const sampleProjects: Project[] = [
   },
   {
     id: "3",
-    title: "Dashboard design project",
+    title: "Marketing campaign",
     description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
-    progress: 50,
+      "Planning and executing a comprehensive marketing campaign for the new product launch. Includes social media, email marketing, and PR activities.",
+    progress: 25,
     progressColor: "yellow",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
+    startDate: "1 Mar 2023",
+    endDate: "15 May 2023",
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -58,13 +62,13 @@ const sampleProjects: Project[] = [
   },
   {
     id: "4",
-    title: "Dashboard design project",
+    title: "Website redesign",
     description:
-      "The project is about designing a web application's Dashboard. The team members should create the design system, the logos and the components we need.",
-    progress: 50,
+      "Complete overhaul of the company website with focus on improved user experience, modern design, and better conversion rates.",
+    progress: 90,
     progressColor: "blue",
-    startDate: "10 Jan",
-    endDate: "30 Jan",
+    startDate: "5 Apr 2023",
+    endDate: "20 Jun 2023",
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -77,7 +81,74 @@ const sampleProjects: Project[] = [
 export default function ProjectsDashboard() {
   const [activeTab, setActiveTab] = useState("myProjects");
   const [projects, setProjects] = useState(sampleProjects);
+  const [filteredProjects, setFilteredProjects] = useState(sampleProjects);
   const [viewOnly, setViewOnly] = useState(false);
+  const [filters, setFilters] = useState<ProjectFilterState>({
+    title: null,
+    members: null,
+    startDate: null,
+    endDate: null,
+    progress: null,
+  });
+
+  // Apply filters to projects
+  useEffect(() => {
+    const newFilteredProjects = projects.filter((project) => {
+      // Filter by title
+      if (
+        filters.title &&
+        !project.title.toLowerCase().includes(filters.title.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // Filter by members (multi-select)
+      if (filters.members && filters.members.length > 0) {
+        const memberAvatars = project.members.map((m) => m.avatar);
+        // Check if any of the selected members are in this project
+        const hasMatchingMember = filters.members.some((m) =>
+          memberAvatars.includes(m)
+        );
+        if (!hasMatchingMember) return false;
+      }
+
+      // Filter by start date
+      if (filters.startDate) {
+        const projectStartDate = new Date(project.startDate);
+        const filterStartDate = new Date(filters.startDate);
+
+        if (projectStartDate < filterStartDate) {
+          return false;
+        }
+      }
+
+      // Filter by end date
+      if (filters.endDate) {
+        const projectEndDate = new Date(project.endDate);
+        const filterEndDate = new Date(filters.endDate);
+
+        if (projectEndDate > filterEndDate) {
+          return false;
+        }
+      }
+
+      // Filter by progress
+      if (filters.progress !== null) {
+        if (project.progress < filters.progress) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    setFilteredProjects(newFilteredProjects);
+  }, [projects, filters]);
+
+  // Handle filter changes
+  const handleFilterChange = (newFilters: ProjectFilterState) => {
+    setFilters(newFilters);
+  };
 
   return (
     <div className="h-full">
@@ -112,6 +183,9 @@ export default function ProjectsDashboard() {
         </button>
       </div>
 
+      {/* Filter Bar */}
+      <ProjectFilterBar onFilterChange={handleFilterChange} />
+
       <div className="mb-4 border-b border-gray-200">
         <div className="flex gap-6">
           <button
@@ -138,21 +212,17 @@ export default function ProjectsDashboard() {
       </div>
 
       <div className="bg-gray-50 p-4">
-        {/* <div className="mb-4 flex items-center">
-          <button
-            className="flex items-center gap-1 text-sm text-gray-600"
-            onClick={() => setViewOnly(!viewOnly)}
-          >
-            <Eye className="h-4 w-4" />
-            <span>View Only :</span>
-          </button>
-        </div> */}
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
+        {filteredProjects.length === 0 ? (
+          <div className="flex justify-center items-center h-40 text-gray-500">
+            No projects match your filters
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
