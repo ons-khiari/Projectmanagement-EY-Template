@@ -76,9 +76,11 @@ export function TaskDetails({ task, isOpen, onClose }: TaskDetailsProps) {
                 </span>
                 <div className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
-                    <AvatarFallback>UN</AvatarFallback>
+                    <AvatarFallback>{task.assignee || "UN"}</AvatarFallback>
                   </Avatar>
-                  <span className="text-sm">Unassigned</span>
+                  <span className="text-sm">
+                    {task.assignee ? getFullName(task.assignee) : "Unassigned"}
+                  </span>
                   <Button
                     variant="link"
                     className="text-xs text-blue-500 h-auto p-0"
@@ -101,7 +103,7 @@ export function TaskDetails({ task, isOpen, onClose }: TaskDetailsProps) {
                   <Avatar className="h-6 w-6">
                     <AvatarFallback>OK</AvatarFallback>
                   </Avatar>
-                  <span className="text-sm">Ons Khairi</span>
+                  <span className="text-sm">Ons Khiari</span>
                 </div>
               </div>
 
@@ -109,8 +111,17 @@ export function TaskDetails({ task, isOpen, onClose }: TaskDetailsProps) {
                 <span className="text-sm text-muted-foreground">
                   Task status
                 </span>
-                <div className="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
-                  Low
+                <div
+                  className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
+                    task.priority === "high"
+                      ? "bg-red-100 text-red-800"
+                      : task.priority === "med"
+                      ? "bg-orange-100 text-orange-800"
+                      : "bg-blue-100 text-blue-800"
+                  }`}
+                >
+                  {task.priority.charAt(0).toUpperCase() +
+                    task.priority.slice(1)}
                 </div>
               </div>
 
@@ -200,4 +211,22 @@ export function TaskDetails({ task, isOpen, onClose }: TaskDetailsProps) {
       </SheetContent>
     </Sheet>
   );
+}
+
+// Helper function to get full name from initials
+function getFullName(initials: string): string {
+  switch (initials) {
+    case "OK":
+      return "Ons Khiari";
+    case "JD":
+      return "John Doe";
+    case "AS":
+      return "Anna Smith";
+    case "MK":
+      return "Mike Kim";
+    case "RL":
+      return "Rachel Lee";
+    default:
+      return initials;
+  }
 }

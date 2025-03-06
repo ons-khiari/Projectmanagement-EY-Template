@@ -20,6 +20,7 @@ const sampleProjects: Project[] = [
     progressColor: "blue",
     startDate: "10 Jan 2023",
     endDate: "30 Jan 2023",
+    projectManager: { id: "1", avatar: "OK", color: "#27acaa" },
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -37,6 +38,7 @@ const sampleProjects: Project[] = [
     progressColor: "orange",
     startDate: "15 Feb 2023",
     endDate: "30 Apr 2023",
+    projectManager: { id: "2", avatar: "JD", color: "#6366f1" },
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -54,6 +56,7 @@ const sampleProjects: Project[] = [
     progressColor: "yellow",
     startDate: "1 Mar 2023",
     endDate: "15 May 2023",
+    projectManager: { id: "3", avatar: "AS", color: "#f43f5e" },
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -69,6 +72,7 @@ const sampleProjects: Project[] = [
     progressColor: "blue",
     startDate: "5 Apr 2023",
     endDate: "20 Jun 2023",
+    projectManager: { id: "4", avatar: "MK", color: "#8b5cf6" },
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },

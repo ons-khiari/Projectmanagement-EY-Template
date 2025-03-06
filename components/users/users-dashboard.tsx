@@ -12,7 +12,7 @@ const sampleUsers: User[] = [
     email: "ons.khiari@esprit.tn",
     phoneNumber: "+216 55678206",
     cin: "1273TU4YT21",
-    role: "Project manager",
+    role: "user",
     avatar: "OK",
   },
   {
@@ -21,7 +21,7 @@ const sampleUsers: User[] = [
     email: "arij.bensaid@esprit.tn",
     phoneNumber: "+216 55678206",
     cin: "1273TU4YT21",
-    role: "Team member",
+    role: "user",
     avatar: "AS",
   },
   {
