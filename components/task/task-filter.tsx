@@ -88,13 +88,19 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
             handleFilterChange("assignee", value || null)
           }
         >
-          <SelectTrigger className="h-9">
-            <SelectValue placeholder="Assignee" />
+          <SelectTrigger className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100">
+            <SelectValue placeholder="Assignee" className="text-gray-500" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Assignees</SelectItem>
+            <SelectItem value="all" className="text-gray-500">
+              All Assignees
+            </SelectItem>
             {assignees.map((assignee) => (
-              <SelectItem key={assignee} value={assignee}>
+              <SelectItem
+                key={assignee}
+                value={assignee}
+                className="text-gray-500"
+              >
                 {assignee}
               </SelectItem>
             ))}
@@ -110,13 +116,19 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
             handleFilterChange("project", value || null)
           }
         >
-          <SelectTrigger className="h-9">
-            <SelectValue placeholder="Project" />
+          <SelectTrigger className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100">
+            <SelectValue placeholder="Project" className="text-gray-500" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Projects</SelectItem>
+            <SelectItem value="all" className="text-gray-500">
+              All Projects
+            </SelectItem>
             {projects.map((project) => (
-              <SelectItem key={project} value={project}>
+              <SelectItem
+                key={project}
+                value={project}
+                className="text-gray-500"
+              >
                 {project}
               </SelectItem>
             ))}
@@ -132,13 +144,19 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
             handleFilterChange("deliverable", value || null)
           }
         >
-          <SelectTrigger className="h-9">
-            <SelectValue placeholder="Deliverable" />
+          <SelectTrigger className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100">
+            <SelectValue placeholder="Deliverable" className="text-gray-500" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Deliverables</SelectItem>
+            <SelectItem value="all" className="text-gray-500">
+              All Deliverables
+            </SelectItem>
             {deliverables.map((deliverable) => (
-              <SelectItem key={deliverable} value={deliverable}>
+              <SelectItem
+                key={deliverable}
+                value={deliverable}
+                className="text-gray-500"
+              >
                 {deliverable}
               </SelectItem>
             ))}
@@ -154,13 +172,15 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
             handleFilterChange("deliverablePhase", value || null)
           }
         >
-          <SelectTrigger className="h-9">
-            <SelectValue placeholder="Phase" />
+          <SelectTrigger className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100">
+            <SelectValue placeholder="Phase" className="text-gray-500" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Phases</SelectItem>
+            <SelectItem value="all" className="text-gray-500">
+              All Phases
+            </SelectItem>
             {deliverablePhases.map((phase) => (
-              <SelectItem key={phase} value={phase}>
+              <SelectItem key={phase} value={phase} className="text-gray-500">
                 {phase}
               </SelectItem>
             ))}
@@ -176,13 +196,19 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
             handleFilterChange("priority", value || null)
           }
         >
-          <SelectTrigger className="h-9">
-            <SelectValue placeholder="Priority" />
+          <SelectTrigger className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100">
+            <SelectValue placeholder="Priority" className="text-gray-500" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Priorities</SelectItem>
+            <SelectItem value="all" className="text-gray-500">
+              All Priorities
+            </SelectItem>
             {priorities.map((priority) => (
-              <SelectItem key={priority} value={priority}>
+              <SelectItem
+                key={priority}
+                value={priority}
+                className="text-gray-500"
+              >
                 {priority.charAt(0).toUpperCase() + priority.slice(1)}
               </SelectItem>
             ))}
@@ -197,12 +223,16 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
             <Button
               variant="outline"
               className={cn(
-                "h-9 w-full justify-start text-left font-normal",
+                "h-9 w-full justify-start text-left font-normal border-gray-200 text-gray-500 hover:bg-gray-100",
                 !filters.date && "text-muted-foreground"
               )}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {filters.date ? format(filters.date, "PPP") : <span>Date</span>}
+              <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
+              {filters.date ? (
+                format(filters.date, "PPP")
+              ) : (
+                <span className="text-gray-500">Date</span>
+              )}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -217,11 +247,11 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
       </div>
 
       {/* Filter Actions */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 text-gray-500">
         <Button
-          variant="default"
+          variant="outline"
           size="sm"
-          className="h-9 bg-[#ffe500] text-[#444444] hover:bg-[#f5dc00]"
+          className="h-9 border-gray-200 text-black hover:bg-gray-100"
           onClick={handleApplyFilters}
         >
           <Filter className="h-4 w-4 mr-1" />
@@ -230,7 +260,7 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
         <Button
           variant="outline"
           size="sm"
-          className="h-9"
+          className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100"
           onClick={handleClearFilters}
         >
           Clear
