@@ -1,7 +1,7 @@
 "use client";
 
 import { Calendar, Link2, Users, Briefcase, GripVertical } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Deliverable } from "@/app/types/deliverable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -21,6 +21,8 @@ export default function DeliverableCard({
   index,
   isDragging = false,
 }: DeliverableCardProps) {
+  const router = useRouter();
+
   // Set up sortable functionality
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
@@ -48,103 +50,110 @@ export default function DeliverableCard({
     default: "Normal", // Fallback
   };
 
-  // Create the card content
-  const cardContent = (
-    <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md relative overflow-hidden group">
-      {/* Drag handle */}
-      <div
-        className="absolute right-3 top-3 cursor-grab active:cursor-grabbing p-1 rounded-full hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="h-4 w-4 text-gray-400" />
-      </div>
+  // If projectId and phaseId are provided, use those, otherwise extract from the deliverable
+  const linkProjectId =
+    projectId ||
+    (deliverable.project ? deliverable.project.split(" ")[1] : "1");
+  const linkPhaseId =
+    phaseId ||
+    (deliverable.deliverablePhase
+      ? deliverable.deliverablePhase.split(" ")[1]
+      : "1");
 
-      {/* Priority Number Badge - Circle style like in project details */}
-      <div className="absolute -top-1 -left-1 w-8 h-8 bg-[#ffe500] rounded-full flex items-center justify-center font-bold text-[#444444] border-2 border-white shadow-sm">
-        D{deliverable.priority_number}
-      </div>
+  // Handle card click
+  const handleCardClick = () => {
+    router.push(
+      `/projects/${linkProjectId}/phases/${linkPhaseId}/deliverables/${deliverable.id}`
+    );
+  };
 
-      <div className="mb-3 flex items-center gap-2 pl-6">
-        <span
-          className={`rounded-full px-2 py-1 text-xs font-medium ${
-            priorityColors[
-              deliverable.priority as keyof typeof priorityColors
-            ] || priorityColors.default
-          }`}
-        >
-          {priorityBadges[
-            deliverable.priority as keyof typeof priorityBadges
-          ] || priorityBadges.default}
-        </span>
-      </div>
-
-      <h3 className="mb-2 text-lg font-semibold text-gray-800">
-        {deliverable.title}
-      </h3>
-
-      <p className="mb-4 text-sm text-gray-600 line-clamp-2">
-        {deliverable.description}
-      </p>
-
-      {/* Project information */}
-      <div className="mb-3 flex items-center text-xs text-gray-500">
-        <Briefcase className="mr-1 h-3 w-3" />
-        <span className="font-medium">Project:</span>
-        <span className="ml-1">{deliverable.project}</span>
-      </div>
-
-      <div className="mb-3 flex items-center text-xs text-gray-500">
-        <Calendar className="mr-1 h-3 w-3" />
-        <span>{deliverable.date}</span>
-      </div>
-
-      {deliverable.link && (
-        <div className="mb-4 flex items-center text-xs text-blue-500 hover:underline">
-          <Link2 className="mr-1 h-3 w-3" />
-          <span>{deliverable.link}</span>
-        </div>
-      )}
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <Users className="h-3 w-3 text-gray-500" />
-          <span className="text-xs text-gray-500">
-            {deliverable.assignee.length} assignee(s)
-          </span>
-        </div>
-        <div className="flex -space-x-2">
-          {deliverable.assignee.map((member) => (
-            <div
-              key={member.id}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-xs text-white border-2 border-white"
-              style={{ backgroundColor: member.color }}
-              title={getFullName(member.avatar)}
-            >
-              {member.avatar}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  // If projectId and phaseId are provided, wrap in Link, otherwise just return the card
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={`${isDragging ? "opacity-50" : ""}`}
     >
-      {projectId && phaseId ? (
-        <Link
-          href={`/projects/${projectId}/phases/${phaseId}/deliverables/${deliverable.id}`}
+      <div
+        className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md relative overflow-hidden group cursor-pointer"
+        onClick={handleCardClick}
+      >
+        {/* Drag handle - separated from the clickable area */}
+        <div
+          className="absolute right-3 top-3 cursor-grab active:cursor-grabbing p-1 rounded-full hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+          {...attributes}
+          {...listeners}
+          onClick={(e) => e.stopPropagation()} // Prevent click from propagating to the card
         >
-          {cardContent}
-        </Link>
-      ) : (
-        cardContent
-      )}
+          <GripVertical className="h-4 w-4 text-gray-400" />
+        </div>
+
+        {/* Priority Number Badge - Circle style like in project details */}
+        <div className="absolute -top-1 -left-1 w-8 h-8 bg-[#ffe500] rounded-full flex items-center justify-center font-bold text-[#444444] border-2 border-white shadow-sm">
+          D{deliverable.priority_number}
+        </div>
+
+        <div className="mb-3 flex items-center gap-2 pl-6">
+          <span
+            className={`rounded-full px-2 py-1 text-xs font-medium ${
+              priorityColors[
+                deliverable.priority as keyof typeof priorityColors
+              ] || priorityColors.default
+            }`}
+          >
+            {priorityBadges[
+              deliverable.priority as keyof typeof priorityBadges
+            ] || priorityBadges.default}
+          </span>
+        </div>
+
+        <h3 className="mb-2 text-lg font-semibold text-gray-800">
+          {deliverable.title}
+        </h3>
+
+        <p className="mb-4 text-sm text-gray-600 line-clamp-2">
+          {deliverable.description}
+        </p>
+
+        {/* Project information */}
+        <div className="mb-3 flex items-center text-xs text-gray-500">
+          <Briefcase className="mr-1 h-3 w-3" />
+          <span className="font-medium">Project:</span>
+          <span className="ml-1">{deliverable.project}</span>
+        </div>
+
+        <div className="mb-3 flex items-center text-xs text-gray-500">
+          <Calendar className="mr-1 h-3 w-3" />
+          <span>{deliverable.date}</span>
+        </div>
+
+        {deliverable.link && (
+          <div className="mb-4 flex items-center text-xs text-blue-500 hover:underline">
+            <Link2 className="mr-1 h-3 w-3" />
+            <span>{deliverable.link}</span>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Users className="h-3 w-3 text-gray-500" />
+            <span className="text-xs text-gray-500">
+              {deliverable.assignee.length} assignee(s)
+            </span>
+          </div>
+          <div className="flex -space-x-2">
+            {deliverable.assignee.map((member) => (
+              <div
+                key={member.id}
+                className="flex h-7 w-7 items-center justify-center rounded-full text-xs text-white border-2 border-white"
+                style={{ backgroundColor: member.color }}
+                title={getFullName(member.avatar)}
+              >
+                {member.avatar}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

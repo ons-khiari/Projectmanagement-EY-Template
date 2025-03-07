@@ -25,6 +25,13 @@ export default function DeliverableColumn({
     id,
   });
 
+  // Helper function to extract ID from project or phase name
+  const extractId = (name: string): string => {
+    // If the name contains a number (e.g., "Project 1"), extract the number
+    const match = name.match(/\d+/);
+    return match ? match[0] : "1"; // Default to '1' if no number found
+  };
+
   return (
     <div className="flex flex-col">
       <div className="mb-3 flex items-center justify-between">
@@ -43,13 +50,21 @@ export default function DeliverableColumn({
           items={deliverables.map((d) => d.id)}
           strategy={verticalListSortingStrategy}
         >
-          {deliverables.map((deliverable, index) => (
-            <DeliverableCard
-              key={deliverable.id}
-              deliverable={deliverable}
-              index={index}
-            />
-          ))}
+          {deliverables.map((deliverable, index) => {
+            // Extract project and phase IDs from the deliverable
+            const projectId = extractId(deliverable.project);
+            const phaseId = extractId(deliverable.deliverablePhase);
+
+            return (
+              <DeliverableCard
+                key={deliverable.id}
+                deliverable={deliverable}
+                projectId={projectId}
+                phaseId={phaseId}
+                index={index}
+              />
+            );
+          })}
         </SortableContext>
         {deliverables.length === 0 && (
           <div className="text-center py-4 text-gray-400 text-sm">

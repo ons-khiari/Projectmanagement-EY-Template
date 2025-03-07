@@ -30,7 +30,7 @@ const sampleUsers: User[] = [
     email: "ahmed.jguirim@esprit.tn",
     phoneNumber: "+216 55678206",
     cin: "1273TU4YT21",
-    role: "client",
+    role: "admin",
     avatar: "AJ",
   },
   {
@@ -59,13 +59,10 @@ export default function UsersDashboard() {
     if (activeTab === "all") return matchesSearch;
     if (activeTab === "admins")
       return user.role.includes("admin") && matchesSearch;
-    if (activeTab === "clients")
-      return user.role.includes("client") && matchesSearch;
 
     // For any other tab, exclude users with 'admin' or 'client' role and apply the search query
     return (
       !user.role.includes("admin") &&
-      !user.role.includes("client") &&
       matchesSearch
     );
   });
@@ -128,16 +125,7 @@ export default function UsersDashboard() {
           >
             Admins
           </button>
-          <button
-            className={`border-b-2 px-4 py-2 text-sm font-medium ${
-              activeTab === "clients"
-                ? "border-[#27acaa] text-[#444444]"
-                : "border-transparent text-gray-500 hover:text-gray-700"
-            }`}
-            onClick={() => setActiveTab("clients")}
-          >
-            Clients
-          </button>
+          
           <button
             className={`border-b-2 px-4 py-2 text-sm font-medium ${
               activeTab === "others"
