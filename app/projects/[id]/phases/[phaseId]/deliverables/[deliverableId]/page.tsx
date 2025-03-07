@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle, Clock, Plus, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Link2,
+  Plus,
+  User,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
@@ -11,6 +20,7 @@ import type { DeliverablePhase } from "@/app/types/deliverable-phase";
 import type { Deliverable } from "@/app/types/deliverable";
 import type { Task } from "@/app/types/task";
 import { TaskDetails } from "@/components/task/task-details";
+import { Badge } from "@/components/ui/badge";
 
 // Sample project data
 const sampleProjects: Project[] = [
@@ -25,7 +35,6 @@ const sampleProjects: Project[] = [
     endDate: "30 Jan 2023",
     projectManager: { id: "1", avatar: "OK", color: "#27acaa" },
     members: [
-      { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
       { id: "3", avatar: "AS", color: "#f43f5e" },
       { id: "4", avatar: "MK", color: "#8b5cf6" },
@@ -64,12 +73,9 @@ const sampleDeliverables: { [key: string]: { [key: string]: Deliverable[] } } =
           priority: "high",
           priority_number: 1,
           date: "12 Jan 2023",
-          assignee: [
-            { id: "1", avatar: "OK", color: "#27acaa" },
-            { id: "2", avatar: "JD", color: "#6366f1" },
-            { id: "3", avatar: "AS", color: "#f43f5e" },
-          ],
+          assignee: [{ id: "1", avatar: "OK", color: "#27acaa" }],
           deliverablePhase: "Research & Planning",
+          status: "done",
         },
         // Other deliverables...
       ],
@@ -94,6 +100,7 @@ const sampleTasks: {
           project: "Dashboard design project",
           deliverable: "User Research Report",
           deliverablePhase: "Research & Planning",
+          status: "done",
         },
         {
           id: "2",
@@ -104,6 +111,7 @@ const sampleTasks: {
           project: "Dashboard design project",
           deliverable: "User Research Report",
           deliverablePhase: "Research & Planning",
+          status: "done",
         },
         {
           id: "3",
@@ -114,6 +122,7 @@ const sampleTasks: {
           project: "Dashboard design project",
           deliverable: "User Research Report",
           deliverablePhase: "Research & Planning",
+          status: "in-progress",
         },
         {
           id: "4",
@@ -124,6 +133,7 @@ const sampleTasks: {
           project: "Dashboard design project",
           deliverable: "User Research Report",
           deliverablePhase: "Research & Planning",
+          status: "todo",
         },
       ],
       // Other deliverables...
@@ -178,18 +188,18 @@ export default function DeliverableDetailPage() {
 
   // Priority colors
   const priorityColors = {
-    low: "bg-blue-100 text-blue-800",
-    med: "bg-orange-100 text-orange-800",
-    high: "bg-red-100 text-red-800",
-    default: "bg-gray-100 text-gray-800", // Fallback color
+    low: "bg-blue-100 text-blue-800 border-blue-200",
+    med: "bg-orange-100 text-orange-800 border-orange-200",
+    high: "bg-red-100 text-red-800 border-red-200",
+    default: "bg-gray-100 text-gray-800 border-gray-200", // Fallback color
   };
 
   // Status colors
   const statusColors = {
-    todo: "bg-gray-100 text-gray-800",
-    "in-progress": "bg-blue-100 text-blue-800",
-    done: "bg-green-100 text-green-800",
-    default: "bg-gray-100 text-gray-800", // Fallback color
+    todo: "bg-gray-100 text-gray-800 border-gray-200",
+    "in-progress": "bg-blue-100 text-blue-800 border-blue-200",
+    done: "bg-green-100 text-green-800 border-green-200",
+    default: "bg-gray-100 text-gray-800 border-gray-200", // Fallback color
   };
 
   if (!project || !phase || !deliverable) {
@@ -249,7 +259,7 @@ export default function DeliverableDetailPage() {
                 </Link>
                 <span className="text-gray-500">/</span>
                 <h1 className="text-2xl font-semibold text-[#444444]">
-                  {deliverable.title}
+                  Deliverable {deliverable.priority_number}: {deliverable.title}
                 </h1>
               </div>
             </div>
@@ -261,20 +271,17 @@ export default function DeliverableDetailPage() {
                 <h2 className="text-xl font-semibold text-[#444444]">
                   {deliverable.title}
                 </h2>
-                <span
-                  className={`rounded-md px-2 py-0.5 text-xs font-medium ${
-                    deliverable.priority
-                      ? priorityColors[
-                          deliverable.priority as keyof typeof priorityColors
-                        ] || priorityColors.default
-                      : priorityColors.default
-                  }`}
+                <Badge
+                  className={
+                    priorityColors[
+                      deliverable.priority as keyof typeof priorityColors
+                    ] || priorityColors.default
+                  }
                 >
-                  {deliverable.priority
-                    ? deliverable.priority.charAt(0).toUpperCase() +
-                      deliverable.priority.slice(1)
-                    : "Normal"}
-                </span>
+                  {deliverable.priority.charAt(0).toUpperCase() +
+                    deliverable.priority.slice(1)}
+                </Badge>
+                <Badge variant="outline">D{deliverable.priority_number}</Badge>
               </div>
             </div>
 
@@ -290,9 +297,10 @@ export default function DeliverableDetailPage() {
                     <span className="text-sm font-medium text-gray-600">
                       Due Date:
                     </span>
-                    <span className="text-sm text-gray-800">
+                    <div className="flex items-center text-sm text-gray-800">
+                      <Calendar className="mr-2 h-4 w-4 text-gray-500" />
                       {deliverable.date}
-                    </span>
+                    </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-600">
@@ -310,6 +318,24 @@ export default function DeliverableDetailPage() {
                       {deliverable.deliverablePhase}
                     </span>
                   </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">
+                      Project Manager:
+                    </span>
+                    <div className="flex items-center">
+                      <div
+                        className="flex h-6 w-6 items-center justify-center rounded-full text-xs text-white mr-2"
+                        style={{
+                          backgroundColor: project.projectManager.color,
+                        }}
+                      >
+                        {project.projectManager.avatar}
+                      </div>
+                      <span className="text-sm text-gray-800">
+                        {getFullName(project.projectManager.avatar)}
+                      </span>
+                    </div>
+                  </div>
                   {deliverable.link && (
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-gray-600">
@@ -317,10 +343,11 @@ export default function DeliverableDetailPage() {
                       </span>
                       <a
                         href={deliverable.link}
-                        className="text-sm text-blue-600 hover:underline"
+                        className="flex items-center text-sm text-blue-600 hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
+                        <Link2 className="mr-1 h-4 w-4" />
                         View Document
                       </a>
                     </div>
@@ -333,35 +360,38 @@ export default function DeliverableDetailPage() {
                   Assigned To
                 </h3>
                 <div className="space-y-3 rounded-md border border-gray-200 bg-gray-50 p-4">
-                  {deliverable.assignee.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between"
-                    >
-                      <div className="flex items-center">
-                        <div
-                          className="flex h-8 w-8 items-center justify-center rounded-full text-xs text-white"
-                          style={{ backgroundColor: member.color }}
-                        >
-                          {member.avatar}
-                        </div>
-                        <span className="ml-3 text-sm text-gray-800">
-                          {member.avatar === "OK"
-                            ? "Ons Khiari"
-                            : member.avatar === "JD"
-                            ? "John Doe"
-                            : member.avatar === "AS"
-                            ? "Anna Smith"
-                            : member.avatar === "MK"
-                            ? "Mike Kim"
-                            : member.avatar === "RL"
-                            ? "Rachel Lee"
-                            : member.avatar}
-                        </span>
-                      </div>
-                      <span className="text-xs text-gray-500">Assignee</span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-600">
+                      Team Members:
+                    </span>
+                    <div className="flex items-center">
+                      <Users className="h-4 w-4 text-gray-500 mr-1" />
+                      <span className="text-sm text-gray-600">
+                        {deliverable.assignee.length} assignee(s)
+                      </span>
                     </div>
-                  ))}
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {deliverable.assignee.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between bg-white p-2 rounded-md border border-gray-100"
+                      >
+                        <div className="flex items-center">
+                          <div
+                            className="flex h-8 w-8 items-center justify-center rounded-full text-xs text-white"
+                            style={{ backgroundColor: member.color }}
+                          >
+                            {member.avatar}
+                          </div>
+                          <span className="ml-3 text-sm text-gray-800">
+                            {getFullName(member.avatar)}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-500">Assignee</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -391,14 +421,14 @@ export default function DeliverableDetailPage() {
                 {tasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-center justify-between rounded-md border border-gray-200 p-3 cursor-pointer hover:bg-gray-50"
+                    className="flex items-center justify-between rounded-md border border-gray-200 p-3 cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => {
                       setSelectedTask(task);
                       setIsTaskDetailsOpen(true);
                     }}
                   >
                     <div className="flex items-center gap-3">
-                      {/* <div
+                      <div
                         className={`flex h-6 w-6 items-center justify-center rounded-full ${
                           task.status === "done"
                             ? "bg-green-500 text-white"
@@ -408,34 +438,30 @@ export default function DeliverableDetailPage() {
                         {task.status === "done" && (
                           <CheckCircle className="h-4 w-4" />
                         )}
-                      </div> */}
+                      </div>
                       <div>
                         <p className="text-sm font-medium text-gray-800">
                           {task.text}
                         </p>
                         <div className="mt-1 flex items-center gap-2">
-                          <span
-                            className={`rounded-md px-2 py-0.5 text-xs font-medium ${
-                              task.priority
-                                ? priorityColors[
-                                    task.priority as keyof typeof priorityColors
-                                  ] || priorityColors.default
-                                : priorityColors.default
-                            }`}
+                          <Badge
+                            className={
+                              priorityColors[
+                                task.priority as keyof typeof priorityColors
+                              ] || priorityColors.default
+                            }
                           >
-                            {task.priority
-                              ? task.priority.charAt(0).toUpperCase() +
-                                task.priority.slice(1)
-                              : "Normal"}
-                          </span>
-                          {/* <span
-                            className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+                            {task.priority.charAt(0).toUpperCase() +
+                              task.priority.slice(1)}
+                          </Badge>
+                          <Badge
+                            className={
                               task.status
                                 ? statusColors[
                                     task.status as keyof typeof statusColors
                                   ] || statusColors.default
                                 : statusColors.default
-                            }`}
+                            }
                           >
                             {task.status === "todo"
                               ? "To Do"
@@ -444,7 +470,7 @@ export default function DeliverableDetailPage() {
                               : task.status === "done"
                               ? "Done"
                               : "To Do"}
-                          </span> */}
+                          </Badge>
                         </div>
                       </div>
                     </div>
@@ -472,4 +498,22 @@ export default function DeliverableDetailPage() {
       </div>
     </div>
   );
+}
+
+// Helper function to get full name from initials
+function getFullName(initials: string): string {
+  switch (initials) {
+    case "OK":
+      return "Ons Khiari";
+    case "JD":
+      return "John Doe";
+    case "AS":
+      return "Anna Smith";
+    case "MK":
+      return "Mike Kim";
+    case "RL":
+      return "Rachel Lee";
+    default:
+      return initials;
+  }
 }

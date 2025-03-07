@@ -2,7 +2,7 @@ export interface Deliverable {
   id: string;
   title: string;
   description: string;
-  link: string;
+  link: string; // Ensure this is present
   project: string;
   priority: "low" | "med" | "high";
   priority_number: number;
@@ -13,4 +13,5 @@ export interface Deliverable {
     color: string;
   }[];
   deliverablePhase?: string;
+  status: "todo" | "in-progress" | "done";
 }

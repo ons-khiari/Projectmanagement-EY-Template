@@ -45,43 +45,50 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <p className="mb-4 text-sm text-gray-600">{project.description}</p>
 
         <div className="mb-4">
-          <div className="mb-1 text-sm font-medium text-gray-700">
-            Project Manager:
-          </div>
-          <div className="flex items-center mb-3">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-full text-xs text-white mr-2"
-              style={{ backgroundColor: project.projectManager.color }}
-            >
-              {project.projectManager.avatar}
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm font-medium text-gray-700">
+              Project Manager:
             </div>
-            <span className="text-sm text-gray-700">
-              {getFullName(project.projectManager.avatar)}
-            </span>
+            <div className="flex items-center">
+              <div
+                className="flex h-8 w-8 items-center justify-center rounded-full text-xs text-white mr-2"
+                style={{ backgroundColor: project.projectManager.color }}
+              >
+                {project.projectManager.avatar}
+              </div>
+              <span className="text-sm text-gray-700">
+                {getFullName(project.projectManager.avatar)}
+              </span>
+            </div>
           </div>
 
-          <div className="mb-1 text-sm font-medium text-gray-700">Members:</div>
-          <div className="flex -space-x-2">
-            {project.members.map((member) => (
-              <div
-                key={member.id}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-xs text-white"
-                style={{ backgroundColor: member.color }}
-              >
-                {member.avatar}
-              </div>
-            ))}
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-medium text-gray-700">
+              Team Members:
+            </div>
+            <div className="flex -space-x-2">
+              {project.members.map((member) => (
+                <div
+                  key={member.id}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-xs text-white"
+                  style={{ backgroundColor: member.color }}
+                  title={getFullName(member.avatar)}
+                >
+                  {member.avatar}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="flex items-center justify-between border-t border-gray-200 pt-3">
           <div className="flex items-center text-xs text-gray-500">
             <Calendar className="mr-1 h-3 w-3" />
-            <span>Start date : {project.startDate}</span>
+            <span>Start date: {project.startDate}</span>
           </div>
           <div className="flex items-center text-xs text-gray-500">
             <Clock className="mr-1 h-3 w-3" />
-            <span>Estimated end date : {project.endDate}</span>
+            <span>End date: {project.endDate}</span>
           </div>
         </div>
       </div>

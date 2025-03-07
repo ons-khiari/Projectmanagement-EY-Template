@@ -3,7 +3,15 @@
 import type { Task } from "@/app/types/task";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical } from "lucide-react";
+import {
+  CheckCircle,
+  Clock,
+  GripVertical,
+  Briefcase,
+  FileText,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface TaskCardProps {
   task: Task;
@@ -28,14 +36,17 @@ export default function TaskCard({
 
   // Priority colors
   const priorityColors = {
-    low: "bg-blue-100 text-blue-800",
-    med: "bg-orange-100 text-orange-800",
-    high: "bg-red-100 text-red-800",
+    low: "bg-blue-100 text-blue-800 border-blue-200",
+    med: "bg-orange-100 text-orange-800 border-orange-200",
+    high: "bg-red-100 text-red-800 border-red-200",
   };
 
-  // Capitalize first letter of priority
-  const priorityLabel =
-    task.priority.charAt(0).toUpperCase() + task.priority.slice(1);
+  // Status colors
+  const statusColors = {
+    todo: "bg-gray-100 text-gray-800 border-gray-200",
+    "in-progress": "bg-blue-100 text-blue-800 border-blue-200",
+    done: "bg-green-100 text-green-800 border-green-200",
+  };
 
   const handleClick = () => {
     if (onSelect) {
@@ -47,46 +58,117 @@ export default function TaskCard({
     <div
       ref={setNodeRef}
       style={style}
-      className={`rounded-md border border-gray-200 bg-white p-3 shadow-sm relative hover:shadow-md transition-shadow ${
+      className={`rounded-lg border border-gray-200 bg-white p-4 shadow-sm relative hover:shadow-md transition-all group ${
         isDragging ? "opacity-50" : ""
+      } ${
+        task.status === "done"
+          ? "border-l-4 border-l-green-500"
+          : task.priority === "high"
+          ? "border-l-4 border-l-red-500"
+          : ""
       }`}
     >
       {/* Drag handle */}
       <div
-        className="absolute right-2 top-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-100"
+        className="absolute right-3 top-3 cursor-grab active:cursor-grabbing p-1 rounded-full hover:bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity"
         {...attributes}
         {...listeners}
       >
         <GripVertical className="h-4 w-4 text-gray-400" />
       </div>
 
+      {/* Task status indicator */}
+      {task.status === "done" && (
+        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1 shadow-md">
+          <CheckCircle className="h-3 w-3" />
+        </div>
+      )}
+
       {/* Clickable content */}
       <div className="cursor-pointer pr-6" onClick={handleClick}>
         <div className="mb-3">
-          <p className="text-sm text-[#444444]">{task.text}</p>
+          <p className="text-sm font-medium text-gray-800 line-clamp-2">
+            {task.text}
+          </p>
         </div>
-        <div className="mb-4">
-          <span className="text-xs text-gray-500">
-            <strong className="font-medium text-[#444444]">Project:</strong>{" "}
-            {task.project}
-          </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span
-              className={`rounded-md px-2 py-0.5 text-xs font-medium ${
-                priorityColors[task.priority as keyof typeof priorityColors]
-              }`}
+
+        <div className="mb-3 flex items-center gap-2">
+          <Badge
+            variant="outline"
+            className={
+              priorityColors[task.priority as keyof typeof priorityColors]
+            }
+          >
+            {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+          </Badge>
+
+          {task.status && (
+            <Badge
+              variant="outline"
+              className={
+                statusColors[task.status as keyof typeof statusColors] ||
+                statusColors.todo
+              }
             >
-              {priorityLabel}
-            </span>
+              {task.status === "todo"
+                ? "To Do"
+                : task.status === "in-progress"
+                ? "In Progress"
+                : "Done"}
+            </Badge>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 text-xs text-gray-500">
+          <div className="flex items-center gap-1">
+            <Briefcase className="h-3 w-3" />
+            <span className="truncate">{task.project}</span>
+          </div>
+
+          {task.deliverable && (
+            <div className="flex items-center gap-1">
+              <FileText className="h-3 w-3" />
+              <span className="truncate">{task.deliverable}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
+          <div className="flex items-center gap-1">
+            <Clock className="h-3 w-3 text-gray-400" />
             <span className="text-xs text-gray-500">{task.date}</span>
           </div>
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#27acaa] text-xs text-white">
-            {task.assignee}
+
+          <div className="flex -space-x-2">
+            <div
+              className="flex h-7 w-7 items-center justify-center rounded-full text-xs text-white border-2 border-white"
+              style={{ backgroundColor: getAvatarColor(task.assignee) }}
+              title={task.assignee}
+            >
+              {task.assignee.slice(0, 2).toUpperCase()}
+            </div>
           </div>
+          
         </div>
       </div>
     </div>
   );
+}
+
+// Helper function to get avatar color
+function getAvatarColor(initials: string): string {
+  switch (initials) {
+    case "OK":
+      return "#27acaa";
+    case "JD":
+      return "#6366f1";
+    case "AS":
+      return "#f43f5e";
+    case "MK":
+      return "#8b5cf6";
+    case "RL":
+      return "#ec4899";
+    default:
+      return "#94a3b8";
+  }
 }

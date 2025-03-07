@@ -37,6 +37,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       assignee: [{ id: "1", avatar: "OK", color: "#27acaa" }],
       project: "Project 1",
       deliverablePhase: "Phase 1",
+      status: "todo",
     },
     {
       id: "2",
@@ -55,6 +56,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       ],
       project: "Project 2",
       deliverablePhase: "Phase 2",
+      status: "todo",
     },
     {
       id: "3",
@@ -71,6 +73,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       ],
       project: "Project 3",
       deliverablePhase: "Phase 1",
+      status: "todo",
     },
   ],
   inProgress: [
@@ -90,6 +93,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       ],
       project: "Project 4",
       deliverablePhase: "Phase 3",
+      status: "in-progress",
     },
     {
       id: "5",
@@ -106,6 +110,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       ],
       project: "Project 5",
       deliverablePhase: "Phase 2",
+      status: "in-progress",
     },
   ],
   done: [
@@ -126,6 +131,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       ],
       project: "Project 6",
       deliverablePhase: "Phase 3",
+      status: "done",
     },
   ],
 };

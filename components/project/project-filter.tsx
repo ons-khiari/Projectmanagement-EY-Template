@@ -9,14 +9,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { CalendarIcon, Filter, X } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 export interface ProjectFilterState {
-  title: string | null;
+  projectManager: string | null;
   members: string[] | null;
   startDate: Date | null;
   endDate: Date | null;
@@ -29,15 +28,16 @@ interface ProjectFilterBarProps {
 
 export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
   const [filters, setFilters] = useState<ProjectFilterState>({
-    title: null,
+    projectManager: null,
     members: null,
     startDate: null,
     endDate: null,
     progress: null,
   });
 
-  // Sample data for members dropdown
+  // Sample data for members and project managers dropdown
   const members = ["OK", "JD", "AS", "MK", "RL"];
+  const projectManagers = ["OK", "JD", "AS", "MK", "RL"];
 
   // State for member selection
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -66,7 +66,7 @@ export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
 
   const handleClearFilters = () => {
     const clearedFilters = {
-      title: null,
+      projectManager: null,
       members: null,
       startDate: null,
       endDate: null,
@@ -79,14 +79,43 @@ export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4 bg-white p-2 rounded-md border border-gray-200">
-      {/* Title Filter */}
+      {/* Project Manager Filter */}
       <div className="flex-1 min-w-[120px]">
-        <Input
-          placeholder="Project Title"
-          className="h-9 border-gray-200 text-gray-500 hover:bg-gray-100"
-          value={filters.title || ""}
-          onChange={(e) => handleFilterChange("title", e.target.value || null)}
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="h-9 w-full justify-start text-left font-normal border-gray-200 text-gray-500 hover:bg-gray-100"
+            >
+              {filters.projectManager ? (
+                <span>{getFullName(filters.projectManager)}</span>
+              ) : (
+                <span className="text-gray-500">Project Manager</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[200px] p-2" align="start">
+            <div className="space-y-2">
+              {projectManagers.map((pm) => (
+                <div key={pm} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`pm-${pm}`}
+                    checked={filters.projectManager === pm}
+                    onCheckedChange={(checked) =>
+                      handleFilterChange("projectManager", checked ? pm : null)
+                    }
+                  />
+                  <label
+                    htmlFor={`pm-${pm}`}
+                    className="text-sm cursor-pointer"
+                  >
+                    {getFullName(pm)}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Members Filter (Multi-select) */}
@@ -135,7 +164,7 @@ export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
                     htmlFor={`member-${member}`}
                     className="text-sm cursor-pointer"
                   >
-                    {member}
+                    {getFullName(member)}
                   </label>
                 </div>
               ))}
@@ -255,4 +284,22 @@ export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
       </div>
     </div>
   );
+}
+
+// Helper function to get full name from initials
+function getFullName(initials: string): string {
+  switch (initials) {
+    case "OK":
+      return "Ons Khiari";
+    case "JD":
+      return "John Doe";
+    case "AS":
+      return "Anna Smith";
+    case "MK":
+      return "Mike Kim";
+    case "RL":
+      return "Rachel Lee";
+    default:
+      return initials;
+  }
 }

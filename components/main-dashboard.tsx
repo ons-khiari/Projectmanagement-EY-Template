@@ -31,6 +31,7 @@ const sampleProjects: Project[] = [
     progressColor: "blue",
     startDate: "10 Jan",
     endDate: "30 Jan",
+    projectManager: { id: "1", avatar: "OK", color: "#27acaa" },
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
@@ -44,6 +45,7 @@ const sampleProjects: Project[] = [
     progressColor: "orange",
     startDate: "15 Feb",
     endDate: "20 Mar",
+    projectManager: { id: "3", avatar: "AS", color: "#f43f5e" },
     members: [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "3", avatar: "AS", color: "#f43f5e" },
@@ -57,6 +59,7 @@ const sampleProjects: Project[] = [
     progressColor: "yellow",
     startDate: "5 Mar",
     endDate: "15 Apr",
+    projectManager: { id: "4", avatar: "MK", color: "#f43f5e" },
     members: [
       { id: "2", avatar: "JD", color: "#6366f1" },
       { id: "4", avatar: "MK", color: "#8b5cf6" },
@@ -74,6 +77,7 @@ const sampleTasks: Task[] = [
     project: "Dashboard design project",
     deliverable: "Deliverable 1",
     deliverablePhase: "Phase 1",
+    status: "todo",
   },
   {
     id: "2",
@@ -84,6 +88,7 @@ const sampleTasks: Task[] = [
     project: "Dashboard design project",
     deliverable: "Deliverable 1",
     deliverablePhase: "Phase 1",
+    status: "in-progress",
   },
   {
     id: "3",
@@ -94,6 +99,7 @@ const sampleTasks: Task[] = [
     project: "Dashboard design project",
     deliverable: "Deliverable 1",
     deliverablePhase: "Phase 1",
+    status: "done",
   },
 ];
 

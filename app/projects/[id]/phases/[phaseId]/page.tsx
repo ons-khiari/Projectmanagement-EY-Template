@@ -76,6 +76,7 @@ const sampleDeliverables: { [key: string]: { [key: string]: Deliverable[] } } =
           date: "12 Jan 2023",
           assignee: [{ id: "1", avatar: "OK", color: "#27acaa" }],
           deliverablePhase: "Research & Planning",
+          status: "done",
         },
         {
           id: "2",
@@ -88,6 +89,7 @@ const sampleDeliverables: { [key: string]: { [key: string]: Deliverable[] } } =
           date: "14 Jan 2023",
           assignee: [{ id: "2", avatar: "JD", color: "#6366f1" }],
           deliverablePhase: "Research & Planning",
+          status: "done",
         },
       ],
       "2": [
@@ -102,6 +104,7 @@ const sampleDeliverables: { [key: string]: { [key: string]: Deliverable[] } } =
           date: "18 Jan 2023",
           assignee: [{ id: "3", avatar: "AS", color: "#f43f5e" }],
           deliverablePhase: "Design & Prototyping",
+          status: "in-progress",
         },
         {
           id: "4",
@@ -117,6 +120,7 @@ const sampleDeliverables: { [key: string]: { [key: string]: Deliverable[] } } =
             { id: "5", avatar: "RL", color: "#ec4899" },
           ],
           deliverablePhase: "Design & Prototyping",
+          status: "todo",
         },
       ],
       "3": [
@@ -131,6 +135,7 @@ const sampleDeliverables: { [key: string]: { [key: string]: Deliverable[] } } =
           date: "25 Jan 2023",
           assignee: [{ id: "4", avatar: "MK", color: "#8b5cf6" }],
           deliverablePhase: "Development & Testing",
+          status: "todo",
         },
         {
           id: "6",
@@ -146,6 +151,7 @@ const sampleDeliverables: { [key: string]: { [key: string]: Deliverable[] } } =
             { id: "2", avatar: "JD", color: "#6366f1" },
           ],
           deliverablePhase: "Development & Testing",
+          status: "todo",
         },
       ],
     },
@@ -386,8 +392,13 @@ export default function DeliverablePhaseDetailPage() {
                   href={`/projects/${projectId}/phases/${phaseId}/deliverables/${deliverable.id}`}
                   className="block"
                 >
-                  <div className="rounded-md border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md">
-                    <div className="mb-2 flex items-center justify-between">
+                  <div className="rounded-md border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md relative">
+                    {/* Deliverable Number Badge */}
+                    <div className="absolute -top-2 -left-2 w-8 h-8 bg-[#ffe500] rounded-full flex items-center justify-center font-bold text-[#444444] border-2 border-white shadow-sm">
+                      D{deliverable.priority_number}
+                    </div>
+
+                    <div className="mb-2 flex items-center justify-between pl-6">
                       <span
                         className={`rounded-md px-2 py-0.5 text-xs font-medium ${
                           deliverable.priority
@@ -407,6 +418,7 @@ export default function DeliverablePhaseDetailPage() {
                       </span>
                     </div>
                     <h3 className="mb-2 text-lg font-medium text-gray-800">
+                      Deliverable {deliverable.priority_number}:{" "}
                       {deliverable.title}
                     </h3>
                     <p className="mb-4 text-sm text-gray-600">

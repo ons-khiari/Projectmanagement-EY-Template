@@ -7,4 +7,5 @@ export interface Task {
   project: string;
   deliverable?: string;
   deliverablePhase?: string;
+  status: "todo" | "in-progress" | "done";
 }
