@@ -16,7 +16,7 @@ import DailyCalendar from "./daily-calendar";
 import type { DeliverablePhase } from "@/app/types/deliverable-phase";
 import { months } from "@/app/utils/months";
 import { ScheduleFilterBar, type ScheduleFilterState } from "./schedule-filter";
-import { AddPhaseModal } from "./add-phase-modal";
+import { useRouter } from "next/navigation";
 
 // Sample deliverable phase data with more variety
 const sampleDeliverablePhases: DeliverablePhase[] = [
@@ -80,6 +80,7 @@ const sampleDeliverablePhases: DeliverablePhase[] = [
 ];
 
 export default function ImprovedScheduleDashboard() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState("monthly");
   const [currentMonth, setCurrentMonth] = useState(2); // March (0-indexed)
   const [currentYear, setCurrentYear] = useState(2023);
@@ -305,16 +306,9 @@ export default function ImprovedScheduleDashboard() {
     return "";
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Add this function to handle adding a new task:
-  const handleAddPhase = (newPhase: Partial<DeliverablePhase>) => {
-    const phaseWithId = {
-      ...newPhase,
-      id: (deliverablePhases.length + 1).toString(), // Create a unique ID
-    } as DeliverablePhase;
-
-    setDeliverablePhases([...deliverablePhases, phaseWithId]);
+  // Navigate to add phase page
+  const navigateToAddPhase = () => {
+    router.push("/schedule/add");
   };
 
   return (
@@ -345,19 +339,13 @@ export default function ImprovedScheduleDashboard() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={navigateToAddPhase}
           className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]"
         >
           <Plus className="h-4 w-4" />
           <span>Add Deliverable phase</span>
         </button>
       </div>
-
-      <AddPhaseModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddPhase}
-      />
 
       {/* Filter Bar */}
       <ScheduleFilterBar onFilterChange={handleFilterChange} />

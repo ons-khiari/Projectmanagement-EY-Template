@@ -17,9 +17,8 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import TaskCard from "./task-card";
-import { TaskDetails } from "./task-details";
 import { TaskFilterBar, type TaskFilterState } from "./task-filter";
-import { AddTaskModal } from "./add-task-modal";
+import { useRouter } from "next/navigation";
 
 // Sample task data
 const sampleTasks: Record<string, Task[]> = {
@@ -131,14 +130,13 @@ const sampleTasks: Record<string, Task[]> = {
 };
 import { DragOverEvent } from "@dnd-kit/core";
 
-
 export default function TaskDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("myTasks");
   const [tasks, setTasks] = useState(sampleTasks);
   const [filteredTasks, setFilteredTasks] = useState(sampleTasks);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [filters, setFilters] = useState<TaskFilterState>({
     assignee: null,
     project: null,
@@ -344,7 +342,7 @@ export default function TaskDashboard() {
 
   // Handle task selection
   const handleTaskSelect = (task: Task) => {
-    setSelectedTask(task);
+    router.push(`/tasks/${task.id}`);
   };
 
   // Handle filter changes
@@ -352,21 +350,9 @@ export default function TaskDashboard() {
     setFilters(newFilters);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Add this function to handle adding a new task:
-  const handleAddTask = (newTask: Partial<Task>) => {
-    const newTaskWithId = {
-      ...newTask,
-      id: (tasks.todo.length + 1).toString(), // Create a unique ID
-      status: "todo", // Set the default status
-    } as Task;
-
-    // Update the tasks state by adding the new task to the todo list
-    setTasks({
-      ...tasks,
-      todo: [...tasks.todo, newTaskWithId],
-    });
+  // Navigate to add task page
+  const navigateToAddTask = () => {
+    router.push("/tasks/add");
   };
 
   return (
@@ -397,19 +383,13 @@ export default function TaskDashboard() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={navigateToAddTask}
           className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]"
         >
           <Plus className="h-4 w-4" />
           <span>Add Task</span>
         </button>
       </div>
-
-      <AddTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddTask}
-      />
 
       {/* Filter Bar */}
       <TaskFilterBar onFilterChange={handleFilterChange} />
@@ -482,13 +462,6 @@ export default function TaskDashboard() {
           ) : null}
         </DragOverlay>
       </DndContext>
-
-      {/* Task Details Panel */}
-      <TaskDetails
-        task={selectedTask}
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
-      />
     </div>
   );
 }

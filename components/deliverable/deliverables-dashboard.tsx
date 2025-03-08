@@ -21,7 +21,7 @@ import {
   DeliverableFilterBar,
   type DeliverableFilterState,
 } from "./deliverable-filter";
-import { AddDeliverableModal } from "./add-deliverable-modal";
+import { useRouter } from "next/navigation";
 
 // Sample deliverable data
 const sampleDeliverables: Record<string, Deliverable[]> = {
@@ -145,6 +145,7 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
 import { DragOverEvent } from "@dnd-kit/core";
 
 export default function DeliverablesDashboard() {
+  const router = useRouter();
   const [deliverables, setDeliverables] = useState(sampleDeliverables);
   const [filteredDeliverables, setFilteredDeliverables] =
     useState(sampleDeliverables);
@@ -370,24 +371,9 @@ export default function DeliverablesDashboard() {
     setFilters(newFilters);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Add this function to handle adding a new deliverable:
-  const handleAddDeliverable = (newDeliverable: Partial<Deliverable>) => {
-    const deliverableWithId = {
-      ...newDeliverable,
-      id: (deliverables.todo.length + 1).toString(), // Create a unique ID
-      status: "todo", // Set the status directly in the deliverable object
-    } as Deliverable;
-
-    // Create a new todo array with the added deliverable
-    const updatedTodoList = [...deliverables.todo, deliverableWithId];
-
-    // Update the deliverables state with the new todo list
-    setDeliverables({
-      ...deliverables,
-      todo: updatedTodoList,
-    });
+  // Navigate to add deliverable page
+  const navigateToAddDeliverable = () => {
+    router.push("/deliverables/add");
   };
 
   return (
@@ -418,19 +404,13 @@ export default function DeliverablesDashboard() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={navigateToAddDeliverable}
           className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]"
         >
           <Plus className="h-4 w-4" />
           <span>Add deliverable</span>
         </button>
       </div>
-
-      <AddDeliverableModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddDeliverable}
-      />
 
       {/* Filter Bar */}
       <DeliverableFilterBar onFilterChange={handleFilterChange} />

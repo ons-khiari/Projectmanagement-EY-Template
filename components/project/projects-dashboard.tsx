@@ -4,11 +4,8 @@ import { useState, useEffect } from "react";
 import { Search, Edit, Settings, Plus } from "lucide-react";
 import ProjectCard from "./project-card";
 import type { Project } from "@/app/types/project";
-import {
-  ProjectFilterBar,
-  type ProjectFilterState,
-} from "./project-filter";
-import { AddProjectModal } from "./add-project-modal";
+import { ProjectFilterBar, type ProjectFilterState } from "./project-filter";
+import { useRouter } from "next/navigation";
 
 // Sample project data with different progress bar colors
 const sampleProjects: Project[] = [
@@ -108,6 +105,7 @@ const sampleProjects: Project[] = [
 ];
 
 export default function ProjectsDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("myProjects");
   const [projects, setProjects] = useState(sampleProjects);
   const [filteredProjects, setFilteredProjects] = useState(sampleProjects);
@@ -122,8 +120,6 @@ export default function ProjectsDashboard() {
   // Apply filters to projects
   useEffect(() => {
     const newFilteredProjects = projects.filter((project) => {
-     
-
       // Filter by members (multi-select)
       if (filters.members && filters.members.length > 0) {
         const memberAvatars = project.members.map((m) => m.avatar);
@@ -172,16 +168,9 @@ export default function ProjectsDashboard() {
     setFilters(newFilters);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Add this function to handle adding a new project:
-  const handleAddProject = (newProject: Partial<Project>) => {
-    const projectWithId = {
-      ...newProject,
-      id: (projects.length + 1).toString(), // Create a unique ID
-    } as Project;
-
-    setProjects([...projects, projectWithId]);
+  // Navigate to add project page
+  const navigateToAddProject = () => {
+    router.push("/projects/add");
   };
 
   return (
@@ -212,7 +201,7 @@ export default function ProjectsDashboard() {
         </div>
 
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={navigateToAddProject}
           className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]"
         >
           <Plus className="h-4 w-4" />
@@ -220,12 +209,6 @@ export default function ProjectsDashboard() {
         </button>
       </div>
 
-      <AddProjectModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddProject}
-      />
-      
       {/* Filter Bar */}
       <ProjectFilterBar onFilterChange={handleFilterChange} />
 
