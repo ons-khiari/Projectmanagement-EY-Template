@@ -80,7 +80,7 @@ export default function TaskCard({
       onSelect(task);
     }
   };
-
+  console.log("task", index);
   return (
     <div
       ref={setNodeRef}

@@ -100,7 +100,7 @@ export default function DeliverableCard({
     console.log(`Deleting deliverable ${deliverable.id}`);
     // Then redirect or update UI
   };
-
+  console.log("deliverable", index);
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
