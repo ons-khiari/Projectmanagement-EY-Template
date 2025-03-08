@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Edit, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
@@ -28,6 +28,12 @@ const sampleProjects: Project[] = [
       { id: "4", avatar: "MK", color: "#8b5cf6" },
       { id: "5", avatar: "RL", color: "#ec4899" },
     ],
+    client: {
+      id: "1",
+      name: "Google",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg",
+      type: "company",
+    },
   },
   // Other projects...
 ];
@@ -167,6 +173,7 @@ export default function DeliverablePhaseDetailPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [phase, setPhase] = useState<DeliverablePhase | null>(null);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     // In a real app, you would fetch this data from an API
@@ -203,6 +210,17 @@ export default function DeliverablePhaseDetailPage() {
     default: "border-l-4 border-gray-500 bg-gray-50", // Fallback color
   };
 
+  const handleEdit = () => {
+    router.push(`/projects/${projectId}/phases/${phaseId}/edit`);
+  };
+
+  const handleDelete = () => {
+    // In a real app, you would call an API to delete the phase
+    console.log(`Deleting phase ${phaseId}`);
+    setShowDeleteModal(false);
+    router.push(`/projects/${projectId}`);
+  };
+
   if (!project || !phase) {
     return (
       <div className="flex h-screen w-full flex-col bg-white">
@@ -236,26 +254,44 @@ export default function DeliverablePhaseDetailPage() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-auto p-6">
-          <div className="mb-6 flex items-center">
-            <button
-              onClick={() => router.back()}
-              className="mr-3 rounded-full p-1 hover:bg-gray-100"
-            >
-              <ArrowLeft className="h-5 w-5 text-gray-500" />
-            </button>
-            <div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/projects/${projectId}`}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  {project.title}
-                </Link>
-                <span className="text-gray-500">/</span>
-                <h1 className="text-2xl font-semibold text-[#444444]">
-                  {phase.title}
-                </h1>
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center">
+              <button
+                onClick={() => router.back()}
+                className="mr-3 rounded-full p-1 hover:bg-gray-100"
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-500" />
+              </button>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/projects/${projectId}`}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    {project.title}
+                  </Link>
+                  <span className="text-gray-500">/</span>
+                  <h1 className="text-2xl font-semibold text-[#444444]">
+                    {phase.title}
+                  </h1>
+                </div>
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleEdit}
+                className="flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <Edit className="h-4 w-4" />
+                <span>Edit</span>
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="flex items-center gap-1 rounded-md border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Delete</span>
+              </button>
             </div>
           </div>
 
@@ -440,6 +476,46 @@ export default function DeliverablePhaseDetailPage() {
                   </div>
                 </Link>
               ))}
+            </div>
+          )}
+
+          {/* Delete Confirmation Modal */}
+          {showDeleteModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-medium text-gray-900">
+                    Delete Phase
+                  </h3>
+                  <button
+                    onClick={() => setShowDeleteModal(false)}
+                    className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="mb-5">
+                  <p className="text-sm text-gray-500">
+                    Are you sure you want to delete the phase "{phase.title}"?
+                    This action cannot be undone and will also delete all
+                    deliverables associated with this phase.
+                  </p>
+                </div>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowDeleteModal(false)}
+                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="rounded-md border border-red-300 bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </main>

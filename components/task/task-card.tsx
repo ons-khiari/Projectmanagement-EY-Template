@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import type { Task } from "@/app/types/task";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -9,9 +11,21 @@ import {
   GripVertical,
   Briefcase,
   FileText,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 interface TaskCardProps {
   task: Task;
@@ -48,6 +62,20 @@ export default function TaskCard({
     done: "bg-green-100 text-green-800 border-green-200",
   };
 
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // In a real app, you would navigate to the edit page or open an edit modal
+    console.log(`Editing task ${task.id}`);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // In a real app, you would call an API to delete the task
+    console.log(`Deleting task ${task.id}`);
+  };
+
   const handleClick = () => {
     if (onSelect) {
       onSelect(task);
@@ -77,6 +105,40 @@ export default function TaskCard({
         <GripVertical className="h-4 w-4 text-gray-400" />
       </div>
 
+      {/* Action buttons */}
+      <div className="absolute right-10 top-3 opacity-0 group-hover:opacity-100 transition-opacity">
+        <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDropdown(true);
+              }}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Actions</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-white">
+            <DropdownMenuItem onClick={handleEdit}>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit Task
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-red-600 focus:text-red-600"
+              onClick={handleDelete}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Task
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
       {/* Task status indicator */}
       {task.status === "done" && (
         <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1 shadow-md">
@@ -84,6 +146,7 @@ export default function TaskCard({
         </div>
       )}
 
+      <br />
       {/* Clickable content */}
       <div className="cursor-pointer pr-6" onClick={handleClick}>
         <div className="mb-3">
@@ -148,7 +211,6 @@ export default function TaskCard({
               {task.assignee.slice(0, 2).toUpperCase()}
             </div>
           </div>
-          
         </div>
       </div>
     </div>

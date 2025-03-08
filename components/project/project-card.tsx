@@ -1,15 +1,48 @@
-import { Calendar, Clock, Building2 } from "lucide-react";
+"use client";
+
+import type React from "react";
+
+import {
+  Calendar,
+  Clock,
+  Building2,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Project } from "@/app/types/project";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 interface ProjectCardProps {
   project: Project;
 }
 
-import Placeholder from "@/public/placeholder.svg";
-
 export default function ProjectCard({ project }: ProjectCardProps) {
+  const router = useRouter();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   // Progress bar colors with a default fallback
   const progressColors = {
     blue: "bg-blue-500",
@@ -32,9 +65,62 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     "non-profit": "bg-orange-100 text-orange-800",
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/projects/${project.id}/edit`);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // In a real app, you would call an API to delete the project
+    console.log(`Deleting project ${project.id}`);
+    // Then redirect to projects list
+    router.push("/projects");
+  };
+
+  const [showDropdown, setShowDropdown] = useState(false);
+
   return (
-    <Link href={`/projects/${project.id}`} className="block">
-      <div className="rounded-md border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md">
+    <Link href={`/projects/${project.id}`} className="block group">
+      <div className="rounded-md border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md relative">
+
+
+        {/* Action buttons */}
+        <div className="absolute right-4 top-3 opacity-0 group-hover:opacity-100 transition-opacity">
+          <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDropdown(true);
+                }}
+              >
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Actions</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuItem onClick={handleEdit}>
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit project
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-600 focus:text-red-600"
+                onClick={handleDelete}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete project
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         <div className="mb-3">
           <div className="mb-1 flex items-center justify-between">
             <span className="text-xs text-gray-500">
@@ -58,10 +144,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         {/* Client information */}
         <div className="mb-4 flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gray-100">
-            {project.client && project.client.logo ? (
+            {project.client.logo ? (
               <Image
-                src={project.client.logo}
-                alt={project.client?.name || "Client"}
+                src={project.client.logo || "/placeholder.svg"}
+                alt={project.client.name}
                 width={32}
                 height={32}
                 className="h-full w-full object-cover"
@@ -72,20 +158,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-800">
-              {project.client?.name || "Unknown Client"}
+              {project.client.name}
             </p>
-            {project.client?.type && (
-              <span
-                className={`text-xs px-2 py-0.5 rounded-full ${
-                  clientTypeColors[
-                    project.client.type as keyof typeof clientTypeColors
-                  ] || clientTypeColors["company"]
-                }`}
-              >
-                {project.client.type.charAt(0).toUpperCase() +
-                  project.client.type.slice(1)}
-              </span>
-            )}
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full ${
+                clientTypeColors[project.client.type]
+              }`}
+            >
+              {project.client.type.charAt(0).toUpperCase() +
+                project.client.type.slice(1)}
+            </span>
           </div>
         </div>
 

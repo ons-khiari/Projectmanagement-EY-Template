@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import {
   Calendar,
   Link2,
@@ -7,11 +9,34 @@ import {
   Briefcase,
   GripVertical,
   Building2,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Deliverable } from "@/app/types/deliverable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface DeliverableCardProps {
   deliverable: Deliverable;
@@ -29,6 +54,7 @@ export default function DeliverableCard({
   isDragging = false,
 }: DeliverableCardProps) {
   const router = useRouter();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Set up sortable functionality
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -74,6 +100,22 @@ export default function DeliverableCard({
     );
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(
+      `/projects/${linkProjectId}/phases/${linkPhaseId}/deliverables/${deliverable.id}/edit`
+    );
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // In a real app, you would call an API to delete the deliverable
+    console.log(`Deleting deliverable ${deliverable.id}`);
+    // Then redirect or update UI
+  };
+
+  const [showDropdown, setShowDropdown] = useState(false);
+
   return (
     <div
       ref={setNodeRef}
@@ -94,12 +136,41 @@ export default function DeliverableCard({
           <GripVertical className="h-4 w-4 text-gray-400" />
         </div>
 
-        {/* Priority Number Badge - Circle style like in project details */}
-        <div className="absolute -top-1 -left-1 w-8 h-8 bg-[#ffe500] rounded-full flex items-center justify-center font-bold text-[#444444] border-2 border-white shadow-sm">
-          D{deliverable.priority_number}
+        {/* Action buttons */}
+        <div className="absolute right-10 top-3 opacity-0 group-hover:opacity-100 transition-opacity">
+          <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDropdown(true);
+                }}
+              >
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Actions</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuItem onClick={handleEdit}>
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit Deliverable
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-600 focus:text-red-600"
+                onClick={handleDelete}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Deliverable
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        <div className="mb-3 flex items-center gap-2 pl-6">
+        <div className="mb-3 flex items-center gap-2 pl-0">
           <span
             className={`rounded-full px-2 py-1 text-xs font-medium ${
               priorityColors[
@@ -110,6 +181,11 @@ export default function DeliverableCard({
             {priorityBadges[
               deliverable.priority as keyof typeof priorityBadges
             ] || priorityBadges.default}
+          </span>
+          <span
+            className={`rounded-full px-2 py-1 text-xs font-medium bg-[#ffe500] text-gray-800 border-gray-200`}
+          >
+            D{deliverable.priority_number}
           </span>
         </div>
 
