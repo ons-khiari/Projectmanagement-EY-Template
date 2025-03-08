@@ -283,8 +283,8 @@ export default function DeliverableDetailPage() {
                   </Link>
                   <span className="text-gray-500">/</span>
                   <h1 className="text-2xl font-semibold text-[#444444]">
-                    Deliverable {deliverable.priority_number}:{" "}
-                    {deliverable.title}
+                    Deliverable {deliverable.priority_number}: &quot;
+                    {deliverable.title}&quot;
                   </h1>
                 </div>
               </div>
@@ -558,8 +558,8 @@ export default function DeliverableDetailPage() {
                 </div>
                 <div className="mb-5">
                   <p className="text-sm text-gray-500">
-                    Are you sure you want to delete the deliverable "
-                    {deliverable.title}"? This action cannot be undone and will
+                    Are you sure you want to delete the deliverable :
+                    {deliverable.title} ? This action cannot be undone and will
                     also delete all tasks associated with this deliverable.
                   </p>
                 </div>

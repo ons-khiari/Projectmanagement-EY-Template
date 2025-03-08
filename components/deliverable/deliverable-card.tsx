@@ -31,6 +31,7 @@ interface DeliverableCardProps {
   deliverable: Deliverable;
   projectId?: string;
   phaseId?: string;
+  index: number;
   isDragging?: boolean;
 }
 
@@ -38,6 +39,7 @@ export default function DeliverableCard({
   deliverable,
   projectId,
   phaseId,
+  index,
   isDragging = false,
 }: DeliverableCardProps) {
   const router = useRouter();

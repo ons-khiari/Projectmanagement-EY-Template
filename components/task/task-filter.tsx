@@ -42,7 +42,7 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
     priority: null,
   });
 
-  const handleFilterChange = (key: keyof TaskFilterState, value: any) => {
+  const handleFilterChange = (key: keyof TaskFilterState, value: TaskFilterState[keyof TaskFilterState]) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
   };
@@ -239,7 +239,7 @@ export function TaskFilterBar({ onFilterChange }: TaskFilterBarProps) {
             <Calendar
               mode="single"
               selected={filters.date || undefined}
-              onSelect={(date) => handleFilterChange("date", date)}
+              onSelect={(date) => handleFilterChange("date", date ?? null)}
               initialFocus
             />
           </PopoverContent>

@@ -144,6 +144,7 @@ const sampleDeliverablePhases: { [key: string]: DeliverablePhase[] } = {
   ],
   // Other phases...
 };
+import { Client } from "@/app/types/client";
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -153,7 +154,7 @@ export default function ProjectDetailPage() {
   const [deliverablePhases, setDeliverablePhases] = useState<
     DeliverablePhase[]
   >([]);
-  const [clientDetails, setClientDetails] = useState<any>(null);
+  const [clientDetails, setClientDetails] = useState<Client | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
@@ -164,7 +165,8 @@ export default function ProjectDetailPage() {
       setDeliverablePhases(sampleDeliverablePhases[projectId] || []);
 
       // Find full client details
-      const foundClient = clients.find((c) => c.id === foundProject.client.id);
+      const foundClient =
+        clients.find((c) => c.id === foundProject.client.id) || null;
       setClientDetails(foundClient);
     }
   }, [projectId]);
@@ -253,7 +255,7 @@ export default function ProjectDetailPage() {
                 <ArrowLeft className="h-5 w-5 text-gray-500" />
               </button>
               <h1 className="text-2xl font-semibold text-[#444444]">
-                Project Details
+                {"Project Details"}
               </h1>
             </div>
             <div className="flex items-center gap-2">
@@ -541,10 +543,10 @@ export default function ProjectDetailPage() {
                 </div>
                 <div className="mb-5">
                   <p className="text-sm text-gray-500">
-                    Are you sure you want to delete the project "{project.title}
-                    "? This action cannot be undone and will also delete all
-                    phases, deliverables, and tasks associated with this
-                    project.
+                    Are you sure you want to delete the project :{" "}
+                    {project.title}? This action cannot be undone and will also
+                    delete all phases, deliverables, and tasks associated with
+                    this project.
                   </p>
                 </div>
                 <div className="flex justify-end gap-3">

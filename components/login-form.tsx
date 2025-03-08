@@ -113,7 +113,7 @@ export default function LoginForm() {
               href="#"
               className="block text-sm text-[#007aff] hover:underline"
             >
-              Can't access your account ?
+              Can&apos;t access your account ?
             </a>
             <a
               href="#"

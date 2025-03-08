@@ -55,7 +55,10 @@ export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
     }
   };
 
-  const handleFilterChange = (key: keyof ProjectFilterState, value: any) => {
+  const handleFilterChange = (
+    key: keyof ProjectFilterState,
+    value: ProjectFilterState[keyof ProjectFilterState]
+  ) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
   };
@@ -196,7 +199,7 @@ export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
             <Calendar
               mode="single"
               selected={filters.startDate || undefined}
-              onSelect={(date) => handleFilterChange("startDate", date)}
+              onSelect={(date) => handleFilterChange("startDate", date ?? null)}
               initialFocus
             />
           </PopoverContent>
@@ -226,7 +229,7 @@ export function ProjectFilterBar({ onFilterChange }: ProjectFilterBarProps) {
             <Calendar
               mode="single"
               selected={filters.endDate || undefined}
-              onSelect={(date) => handleFilterChange("endDate", date)}
+              onSelect={(date) => handleFilterChange("endDate", date ?? null)}
               initialFocus
             />
           </PopoverContent>

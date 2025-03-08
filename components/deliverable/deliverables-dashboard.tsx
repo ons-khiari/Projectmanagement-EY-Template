@@ -142,6 +142,8 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
     },
   ],
 };
+import { DragOverEvent } from "@dnd-kit/core";
+
 
 export default function DeliverablesDashboard() {
   const [deliverables, setDeliverables] = useState(sampleDeliverables);
@@ -329,7 +331,7 @@ export default function DeliverablesDashboard() {
   };
 
   // Handle drag over - for dropping into empty containers
-  const handleDragOver = (event: any) => {
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
 
     if (!over) return;

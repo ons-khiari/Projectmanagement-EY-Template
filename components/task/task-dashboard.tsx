@@ -129,6 +129,8 @@ const sampleTasks: Record<string, Task[]> = {
     },
   ],
 };
+import { DragOverEvent } from "@dnd-kit/core";
+
 
 export default function TaskDashboard() {
   const [activeTab, setActiveTab] = useState("myTasks");
@@ -305,7 +307,7 @@ export default function TaskDashboard() {
   };
 
   // Handle drag over - for dropping into empty containers
-  const handleDragOver = (event: any) => {
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
 
     if (!over) return;

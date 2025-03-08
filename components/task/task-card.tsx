@@ -29,12 +29,14 @@ import { useState } from "react";
 interface TaskCardProps {
   task: Task;
   isDragging?: boolean;
+  index: number;
   onSelect?: (task: Task) => void;
 }
 
 export default function TaskCard({
   task,
   isDragging = false,
+  index,
   onSelect,
 }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =

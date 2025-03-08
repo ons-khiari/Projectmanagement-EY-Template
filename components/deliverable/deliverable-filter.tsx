@@ -81,13 +81,16 @@ export function DeliverableFilterBar({
     }
   };
 
-  const handleFilterChange = (
+  const handleFilterChange = <
+    T extends DeliverableFilterState[keyof DeliverableFilterState]
+  >(
     key: keyof DeliverableFilterState,
-    value: any
+    value: T
   ) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
   };
+
 
   const handleApplyFilters = () => {
     onFilterChange(filters);
@@ -303,7 +306,7 @@ export function DeliverableFilterBar({
             <Calendar
               mode="single"
               selected={filters.date || undefined}
-              onSelect={(date) => handleFilterChange("date", date)}
+              onSelect={(date) => handleFilterChange("date", date ?? null)}
               initialFocus
             />
           </PopoverContent>

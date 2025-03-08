@@ -496,9 +496,9 @@ export default function DeliverablePhaseDetailPage() {
                 </div>
                 <div className="mb-5">
                   <p className="text-sm text-gray-500">
-                    Are you sure you want to delete the phase "{phase.title}"?
-                    This action cannot be undone and will also delete all
-                    deliverables associated with this phase.
+                    Are you sure you want to delete the phase &quot;
+                    {phase.title} &quot; ? This action cannot be undone and will
+                    also delete all deliverables associated with this phase.
                   </p>
                 </div>
                 <div className="flex justify-end gap-3">

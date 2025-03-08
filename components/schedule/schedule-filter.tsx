@@ -27,7 +27,7 @@ export function ScheduleFilterBar({ onFilterChange }: ScheduleFilterBarProps) {
     endDate: null,
   });
 
-  const handleFilterChange = (key: keyof ScheduleFilterState, value: any) => {
+  const handleFilterChange = (key: keyof ScheduleFilterState, value: ScheduleFilterState[keyof ScheduleFilterState]) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
   };
@@ -70,7 +70,7 @@ export function ScheduleFilterBar({ onFilterChange }: ScheduleFilterBarProps) {
             <Calendar
               mode="single"
               selected={filters.startDate || undefined}
-              onSelect={(date) => handleFilterChange("startDate", date)}
+              onSelect={(date) => handleFilterChange("startDate", date ?? null)}
               initialFocus
             />
           </PopoverContent>
@@ -100,7 +100,7 @@ export function ScheduleFilterBar({ onFilterChange }: ScheduleFilterBarProps) {
             <Calendar
               mode="single"
               selected={filters.endDate || undefined}
-              onSelect={(date) => handleFilterChange("endDate", date)}
+              onSelect={(date) => handleFilterChange("endDate", date ?? null)}
               initialFocus
             />
           </PopoverContent>
