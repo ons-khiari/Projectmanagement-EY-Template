@@ -8,7 +8,6 @@ interface AddPhaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (phase: Partial<DeliverablePhase>) => void;
-  projectId?: string;
   projectTitle?: string;
 }
 
@@ -16,7 +15,6 @@ export function AddPhaseModal({
   isOpen,
   onClose,
   onAdd,
-  projectId,
   projectTitle,
 }: AddPhaseModalProps) {
   const [title, setTitle] = useState("");

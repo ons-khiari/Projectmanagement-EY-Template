@@ -16,7 +16,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,14 +28,12 @@ import { useState } from "react";
 
 interface TaskCardProps {
   task: Task;
-  index: number;
   isDragging?: boolean;
   onSelect?: (task: Task) => void;
 }
 
 export default function TaskCard({
   task,
-  index,
   isDragging = false,
   onSelect,
 }: TaskCardProps) {

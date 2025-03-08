@@ -199,7 +199,7 @@ export default function UsersDashboard() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user, index) => {
+            {filteredUsers.map((user) => {
               const { color, icon } = getRoleBadge(user.role);
               return (
                 <tr

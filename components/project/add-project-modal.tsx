@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, Plus, Calendar, User, Building2 } from "lucide-react";
+import { X, Plus, Calendar, Building2 } from "lucide-react";
 import Image from "next/image";
 import type { Project } from "@/app/types/project";
 import type { Client } from "@/app/types/client";

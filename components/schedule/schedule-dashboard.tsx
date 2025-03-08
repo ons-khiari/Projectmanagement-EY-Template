@@ -91,7 +91,6 @@ export default function ImprovedScheduleDashboard() {
   const [filteredDeliverablePhases, setFilteredDeliverablePhases] = useState(
     sampleDeliverablePhases
   );
-  const [showHelp, setShowHelp] = useState(true);
   const [filters, setFilters] = useState<ScheduleFilterState>({
     startDate: null,
     endDate: null,
@@ -250,11 +249,6 @@ export default function ImprovedScheduleDashboard() {
     const currentWeekIndex = Math.floor((todayDate + firstDayAdjusted - 1) / 7);
 
     setCurrentWeek(currentWeekIndex);
-  };
-
-  // Close help tooltip
-  const closeHelp = () => {
-    setShowHelp(false);
   };
 
   // Handle filter changes

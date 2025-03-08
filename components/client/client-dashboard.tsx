@@ -196,7 +196,7 @@ export default function ClientsDashboard() {
             </tr>
           </thead>
           <tbody>
-            {filteredClients.map((client, index) => {
+            {filteredClients.map((client) => {
               const { color, icon } = getClientTypeBadge(client.type);
               return (
                 <tr

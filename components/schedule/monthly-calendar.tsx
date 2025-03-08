@@ -121,21 +121,6 @@ export default function ImprovedMonthlyCalendar({
     return date.getTime() === phase.endDate.getTime();
   };
 
-  // Get the position of a phase in a day (for stacking)
-  const getPhasePosition = (
-    phase: DeliverablePhase,
-    day: number,
-    isCurrentMonth: boolean
-  ) => {
-    if (!isCurrentMonth) return -1;
-
-    const phasesForDay = deliverablePhases.filter((p) =>
-      isPhaseActiveOnDay(p, day, isCurrentMonth)
-    );
-
-    return phasesForDay.indexOf(phase);
-  };
-
   // Get phases for a specific day
   const getPhasesForDay = (day: number, isCurrentMonth: boolean) => {
     return deliverablePhases.filter((phase) =>

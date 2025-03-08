@@ -26,23 +26,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 interface DeliverableCardProps {
   deliverable: Deliverable;
   projectId?: string;
   phaseId?: string;
-  index?: number;
   isDragging?: boolean;
 }
 
@@ -50,12 +38,9 @@ export default function DeliverableCard({
   deliverable,
   projectId,
   phaseId,
-  index,
   isDragging = false,
 }: DeliverableCardProps) {
   const router = useRouter();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
   // Set up sortable functionality
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({

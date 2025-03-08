@@ -8,9 +8,7 @@ interface AddDeliverableModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (deliverable: Partial<Deliverable>) => void;
-  projectId?: string;
   projectTitle?: string;
-  phaseId?: string;
   phaseTitle?: string;
 }
 
@@ -18,9 +16,7 @@ export function AddDeliverableModal({
   isOpen,
   onClose,
   onAdd,
-  projectId,
   projectTitle,
-  phaseId,
   phaseTitle,
 }: AddDeliverableModalProps) {
   const [title, setTitle] = useState("");

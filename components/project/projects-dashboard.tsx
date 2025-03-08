@@ -111,7 +111,6 @@ export default function ProjectsDashboard() {
   const [activeTab, setActiveTab] = useState("myProjects");
   const [projects, setProjects] = useState(sampleProjects);
   const [filteredProjects, setFilteredProjects] = useState(sampleProjects);
-  const [viewOnly, setViewOnly] = useState(false);
   const [filters, setFilters] = useState<ProjectFilterState>({
     projectManager: null,
     members: null,

@@ -10,11 +10,8 @@ interface AddTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (task: Partial<Task>) => void;
-  projectId?: string;
   projectTitle?: string;
-  phaseId?: string;
   phaseTitle?: string;
-  deliverableId?: string;
   deliverableTitle?: string;
 }
 
@@ -22,11 +19,8 @@ export function AddTaskModal({
   isOpen,
   onClose,
   onAdd,
-  projectId,
   projectTitle,
-  phaseId,
   phaseTitle,
-  deliverableId,
   deliverableTitle,
 }: AddTaskModalProps) {
   const [text, setText] = useState("");
