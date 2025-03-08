@@ -144,7 +144,6 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
 };
 import { DragOverEvent } from "@dnd-kit/core";
 
-
 export default function DeliverablesDashboard() {
   const [deliverables, setDeliverables] = useState(sampleDeliverables);
   const [filteredDeliverables, setFilteredDeliverables] =
