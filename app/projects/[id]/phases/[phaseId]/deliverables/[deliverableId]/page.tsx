@@ -22,7 +22,7 @@ import type { Project } from "@/app/types/project";
 import type { DeliverablePhase } from "@/app/types/deliverable-phase";
 import type { Deliverable } from "@/app/types/deliverable";
 import type { Task } from "@/app/types/task";
-import { TaskDetails } from "@/components/task/task-details";
+// TaskDetails component no longer needed for modal
 import { Badge } from "@/components/ui/badge";
 
 // Sample project data
@@ -163,8 +163,6 @@ export default function DeliverableDetailPage() {
   const [phase, setPhase] = useState<DeliverablePhase | null>(null);
   const [deliverable, setDeliverable] = useState<Deliverable | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isTaskDetailsOpen, setIsTaskDetailsOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
@@ -469,8 +467,7 @@ export default function DeliverableDetailPage() {
                     key={task.id}
                     className="flex items-center justify-between rounded-md border border-gray-200 p-3 cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => {
-                      setSelectedTask(task);
-                      setIsTaskDetailsOpen(true);
+                      router.push(`/tasks/${task.id}`);
                     }}
                   >
                     <div className="flex items-center gap-3">
@@ -535,11 +532,6 @@ export default function DeliverableDetailPage() {
               </div>
             </div>
           )}
-          <TaskDetails
-            task={selectedTask}
-            isOpen={isTaskDetailsOpen}
-            onClose={() => setIsTaskDetailsOpen(false)}
-          />
 
           {/* Delete Confirmation Modal */}
           {showDeleteModal && (
