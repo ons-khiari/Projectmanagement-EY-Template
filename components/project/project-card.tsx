@@ -1,10 +1,13 @@
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, Building2 } from "lucide-react";
 import Link from "next/link";
 import type { Project } from "@/app/types/project";
+import Image from "next/image";
 
 interface ProjectCardProps {
   project: Project;
 }
+
+import Placeholder from "@/public/placeholder.svg";
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   // Progress bar colors with a default fallback
@@ -20,6 +23,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     ? progressColors[project.progressColor as keyof typeof progressColors] ||
       progressColors.default
     : progressColors.default;
+
+  // Client type badge colors
+  const clientTypeColors = {
+    individual: "bg-purple-100 text-purple-800",
+    company: "bg-blue-100 text-blue-800",
+    government: "bg-green-100 text-green-800",
+    "non-profit": "bg-orange-100 text-orange-800",
+  };
 
   return (
     <Link href={`/projects/${project.id}`} className="block">
@@ -43,6 +54,40 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </h3>
 
         <p className="mb-4 text-sm text-gray-600">{project.description}</p>
+
+        {/* Client information */}
+        <div className="mb-4 flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-gray-100">
+            {project.client && project.client.logo ? (
+              <Image
+                src={project.client.logo}
+                alt={project.client?.name || "Client"}
+                width={32}
+                height={32}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Building2 className="h-4 w-4 text-gray-500" />
+            )}
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-800">
+              {project.client?.name || "Unknown Client"}
+            </p>
+            {project.client?.type && (
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full ${
+                  clientTypeColors[
+                    project.client.type as keyof typeof clientTypeColors
+                  ] || clientTypeColors["company"]
+                }`}
+              >
+                {project.client.type.charAt(0).toUpperCase() +
+                  project.client.type.slice(1)}
+              </span>
+            )}
+          </div>
+        </div>
 
         <div className="mb-4">
           <div className="flex items-center justify-between mb-3">

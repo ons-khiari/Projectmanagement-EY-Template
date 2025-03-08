@@ -8,9 +8,11 @@ import {
   CheckSquare,
   LogOut,
   Users,
+  Building2,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { icon: LayoutGrid, label: "Dashboard", href: "/dashboard" },
@@ -19,10 +21,12 @@ const navItems = [
   { icon: FileText, label: "Deliverables", href: "/deliverables" },
   { icon: CheckSquare, label: "Tasks", href: "/tasks" },
   { icon: Users, label: "Users", href: "/users" },
+  { icon: Building2, label: "Clients", href: "/clients" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname(); // Get current route
+  const router = useRouter();
 
   return (
     <aside className="flex w-48 flex-col border-r border-gray-200 bg-white">
@@ -49,7 +53,10 @@ export default function Sidebar() {
         </ul>
       </nav>
       <div className="border-t border-gray-200 p-4">
-        <button className="flex w-full items-center rounded-md px-3 py-2 text-gray-600 hover:bg-gray-100">
+        <button
+          onClick={() => router.push("/")}
+          className="flex w-full items-center rounded-md px-3 py-2 text-gray-600 hover:bg-gray-100"
+        >
           <LogOut className="mr-3 h-5 w-5" />
           Logout
         </button>

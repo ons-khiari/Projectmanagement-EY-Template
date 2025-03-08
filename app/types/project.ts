@@ -16,4 +16,10 @@ export interface Project {
     avatar: string;
     color: string;
   }[];
+  client: {
+    id: string;
+    name: string;
+    logo?: string;
+    type: "individual" | "company" | "government" | "non-profit";
+  };
 }

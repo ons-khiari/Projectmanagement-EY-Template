@@ -1,6 +1,13 @@
 "use client";
 
-import { Calendar, Link2, Users, Briefcase, GripVertical } from "lucide-react";
+import {
+  Calendar,
+  Link2,
+  Users,
+  Briefcase,
+  GripVertical,
+  Building2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Deliverable } from "@/app/types/deliverable";
 import { useSortable } from "@dnd-kit/sortable";
@@ -114,12 +121,21 @@ export default function DeliverableCard({
           {deliverable.description}
         </p>
 
-        {/* Project information */}
+        {/* Project and client information */}
         <div className="mb-3 flex items-center text-xs text-gray-500">
           <Briefcase className="mr-1 h-3 w-3" />
           <span className="font-medium">Project:</span>
           <span className="ml-1">{deliverable.project}</span>
         </div>
+
+        {/* Display client information if available */}
+        {deliverable.client && (
+          <div className="mb-3 flex items-center text-xs text-gray-500">
+            <Building2 className="mr-1 h-3 w-3" />
+            <span className="font-medium">Client:</span>
+            <span className="ml-1">{deliverable.client.name}</span>
+          </div>
+        )}
 
         <div className="mb-3 flex items-center text-xs text-gray-500">
           <Calendar className="mr-1 h-3 w-3" />

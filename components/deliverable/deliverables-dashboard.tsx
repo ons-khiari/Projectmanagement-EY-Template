@@ -35,9 +35,15 @@ const sampleDeliverables: Record<string, Deliverable[]> = {
       priority_number: 1,
       date: "23 August 2023",
       assignee: [{ id: "1", avatar: "OK", color: "#27acaa" }],
-      project: "Dashboard design project", // Changed to match actual project name
-      deliverablePhase: "Research & Planning", // Changed to match actual phase name
+      project: "Dashboard design project",
+      deliverablePhase: "Research & Planning",
       status: "todo",
+      client: {
+        id: "c1",
+        name: "Acme Corporation",
+        logo: "/placeholder.svg?height=40&width=40",
+        type: "company",
+      },
     },
     {
       id: "2",

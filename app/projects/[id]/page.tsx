@@ -2,12 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Calendar, Plus } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Plus,
+  Building2,
+  Mail,
+  Phone,
+  Globe,
+  MapPin,
+} from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import type { Project } from "@/app/types/project";
 import type { DeliverablePhase } from "@/app/types/deliverable-phase";
+import { clients } from "@/app/types/client";
 
 // Sample project data
 const sampleProjects: Project[] = [
@@ -27,6 +38,12 @@ const sampleProjects: Project[] = [
       { id: "4", avatar: "MK", color: "#8b5cf6" },
       { id: "5", avatar: "RL", color: "#ec4899" },
     ],
+    client: {
+      id: "c1",
+      name: "Acme Corporation",
+      logo: "/placeholder.svg?height=40&width=40",
+      type: "company",
+    },
   },
   {
     id: "2",
@@ -44,6 +61,12 @@ const sampleProjects: Project[] = [
       { id: "4", avatar: "MK", color: "#8b5cf6" },
       { id: "5", avatar: "RL", color: "#ec4899" },
     ],
+    client: {
+      id: "c6",
+      name: "TechStart Inc",
+      logo: "/placeholder.svg?height=40&width=40",
+      type: "company",
+    },
   },
   {
     id: "3",
@@ -59,6 +82,12 @@ const sampleProjects: Project[] = [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "3", avatar: "AS", color: "#f43f5e" },
     ],
+    client: {
+      id: "c5",
+      name: "GreenEarth Foundation",
+      logo: "/placeholder.svg?height=40&width=40",
+      type: "non-profit",
+    },
   },
   {
     id: "4",
@@ -76,6 +105,12 @@ const sampleProjects: Project[] = [
       { id: "3", avatar: "AS", color: "#f43f5e" },
       { id: "4", avatar: "MK", color: "#8b5cf6" },
     ],
+    client: {
+      id: "c8",
+      name: "FinancePro Services",
+      logo: "/placeholder.svg?height=40&width=40",
+      type: "company",
+    },
   },
 ];
 
@@ -104,89 +139,7 @@ const sampleDeliverablePhases: { [key: string]: DeliverablePhase[] } = {
       color: "yellow",
     },
   ],
-  "2": [
-    {
-      id: "1",
-      title: "Requirements Gathering",
-      startDate: new Date(2023, 1, 15),
-      endDate: new Date(2023, 1, 28),
-      color: "blue",
-    },
-    {
-      id: "2",
-      title: "UI/UX Design",
-      startDate: new Date(2023, 2, 1),
-      endDate: new Date(2023, 2, 31),
-      color: "orange",
-    },
-    {
-      id: "3",
-      title: "Development",
-      startDate: new Date(2023, 3, 1),
-      endDate: new Date(2023, 3, 20),
-      color: "yellow",
-    },
-    {
-      id: "4",
-      title: "Testing & Deployment",
-      startDate: new Date(2023, 3, 21),
-      endDate: new Date(2023, 3, 30),
-      color: "green",
-    },
-  ],
-  "3": [
-    {
-      id: "1",
-      title: "Market Research",
-      startDate: new Date(2023, 2, 1),
-      endDate: new Date(2023, 2, 15),
-      color: "blue",
-    },
-    {
-      id: "2",
-      title: "Campaign Planning",
-      startDate: new Date(2023, 2, 16),
-      endDate: new Date(2023, 3, 15),
-      color: "orange",
-    },
-    {
-      id: "3",
-      title: "Execution & Monitoring",
-      startDate: new Date(2023, 3, 16),
-      endDate: new Date(2023, 4, 15),
-      color: "yellow",
-    },
-  ],
-  "4": [
-    {
-      id: "1",
-      title: "Site Analysis",
-      startDate: new Date(2023, 3, 5),
-      endDate: new Date(2023, 3, 20),
-      color: "blue",
-    },
-    {
-      id: "2",
-      title: "Design & Wireframing",
-      startDate: new Date(2023, 3, 21),
-      endDate: new Date(2023, 4, 20),
-      color: "orange",
-    },
-    {
-      id: "3",
-      title: "Development",
-      startDate: new Date(2023, 4, 21),
-      endDate: new Date(2023, 5, 10),
-      color: "yellow",
-    },
-    {
-      id: "4",
-      title: "Testing & Launch",
-      startDate: new Date(2023, 5, 11),
-      endDate: new Date(2023, 5, 20),
-      color: "green",
-    },
-  ],
+  // Other phases...
 };
 
 export default function ProjectDetailPage() {
@@ -197,6 +150,7 @@ export default function ProjectDetailPage() {
   const [deliverablePhases, setDeliverablePhases] = useState<
     DeliverablePhase[]
   >([]);
+  const [clientDetails, setClientDetails] = useState<any>(null);
 
   useEffect(() => {
     // In a real app, you would fetch this data from an API
@@ -204,6 +158,10 @@ export default function ProjectDetailPage() {
     if (foundProject) {
       setProject(foundProject);
       setDeliverablePhases(sampleDeliverablePhases[projectId] || []);
+
+      // Find full client details
+      const foundClient = clients.find((c) => c.id === foundProject.client.id);
+      setClientDetails(foundClient);
     }
   }, [projectId]);
 
@@ -222,6 +180,14 @@ export default function ProjectDetailPage() {
     yellow: "border-l-4 border-yellow-500 bg-yellow-50",
     green: "border-l-4 border-green-500 bg-green-50",
     default: "border-l-4 border-gray-500 bg-gray-50", // Fallback color
+  };
+
+  // Client type badge colors
+  const clientTypeColors = {
+    individual: "bg-purple-100 text-purple-800",
+    company: "bg-blue-100 text-blue-800",
+    government: "bg-green-100 text-green-800",
+    "non-profit": "bg-orange-100 text-orange-800",
   };
 
   if (!project) {
@@ -296,7 +262,8 @@ export default function ProjectDetailPage() {
 
             <p className="mb-6 text-gray-600">{project.description}</p>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {/* Project Details */}
               <div>
                 <h3 className="mb-3 text-lg font-medium text-[#444444]">
                   Project Details
@@ -347,6 +314,99 @@ export default function ProjectDetailPage() {
                 </div>
               </div>
 
+              {/* Client Information */}
+              <div>
+                <h3 className="mb-3 text-lg font-medium text-[#444444]">
+                  Client Information
+                </h3>
+                <div className="space-y-4 rounded-md border border-gray-200 bg-gray-50 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-100">
+                      {project.client.logo ? (
+                        <Image
+                          src={project.client.logo || "/placeholder.svg"}
+                          alt={project.client.name}
+                          width={40}
+                          height={40}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <Building2 className="h-5 w-5 text-gray-500" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800">
+                        {project.client.name}
+                      </p>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full ${
+                          clientTypeColors[project.client.type]
+                        }`}
+                      >
+                        {project.client.type.charAt(0).toUpperCase() +
+                          project.client.type.slice(1)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {clientDetails && (
+                    <div className="space-y-2 pt-2 border-t border-gray-200">
+                      {clientDetails.email && (
+                        <div className="flex items-center text-sm">
+                          <Mail className="mr-2 h-4 w-4 text-gray-500" />
+                          <a
+                            href={`mailto:${clientDetails.email}`}
+                            className="text-blue-600 hover:underline"
+                          >
+                            {clientDetails.email}
+                          </a>
+                        </div>
+                      )}
+
+                      {clientDetails.phone && (
+                        <div className="flex items-center text-sm">
+                          <Phone className="mr-2 h-4 w-4 text-gray-500" />
+                          <span>{clientDetails.phone}</span>
+                        </div>
+                      )}
+
+                      {clientDetails.website && (
+                        <div className="flex items-center text-sm">
+                          <Globe className="mr-2 h-4 w-4 text-gray-500" />
+                          <a
+                            href={
+                              clientDetails.website.startsWith("http")
+                                ? clientDetails.website
+                                : `https://${clientDetails.website}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {clientDetails.website}
+                          </a>
+                        </div>
+                      )}
+
+                      {clientDetails.address && (
+                        <div className="flex items-start text-sm">
+                          <MapPin className="mr-2 h-4 w-4 text-gray-500 mt-0.5" />
+                          <span>{clientDetails.address}</span>
+                        </div>
+                      )}
+
+                      {clientDetails.contactPerson && (
+                        <div className="flex items-center text-sm">
+                          <span className="mr-2 font-medium">Contact:</span>
+                          <span>{clientDetails.contactPerson}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Team Members */}
               <div>
                 <h3 className="mb-3 text-lg font-medium text-[#444444]">
                   Team Members

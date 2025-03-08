@@ -14,4 +14,10 @@ export interface Deliverable {
   project: string;
   deliverablePhase: string;
   status?: "todo" | "in-progress" | "done";
+  client?: {
+    id: string;
+    name: string;
+    logo?: string;
+    type: "individual" | "company" | "government" | "non-profit";
+  };
 }

@@ -28,6 +28,12 @@ const sampleProjects: Project[] = [
       { id: "4", avatar: "MK", color: "#8b5cf6" },
       { id: "5", avatar: "RL", color: "#ec4899" },
     ],
+    client: {
+      id: "1",
+      name: "Google",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg",
+      type: "company",
+    },
   },
   {
     id: "2",
@@ -46,6 +52,12 @@ const sampleProjects: Project[] = [
       { id: "4", avatar: "MK", color: "#8b5cf6" },
       { id: "5", avatar: "RL", color: "#ec4899" },
     ],
+    client: {
+      id: "2",
+      name: "Apple",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+      type: "company",
+    },
   },
   {
     id: "3",
@@ -62,6 +74,12 @@ const sampleProjects: Project[] = [
       { id: "2", avatar: "JD", color: "#6366f1" },
       { id: "3", avatar: "AS", color: "#f43f5e" },
     ],
+    client: {
+      id: "3",
+      name: "Facebook",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
+      type: "company",
+    },
   },
   {
     id: "4",
@@ -79,6 +97,12 @@ const sampleProjects: Project[] = [
       { id: "3", avatar: "AS", color: "#f43f5e" },
       { id: "4", avatar: "MK", color: "#8b5cf6" },
     ],
+    client: {
+      id: "4",
+      name: "Amazon",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+      type: "company",
+    },
   },
 ];
 
@@ -88,7 +112,7 @@ export default function ProjectsDashboard() {
   const [filteredProjects, setFilteredProjects] = useState(sampleProjects);
   const [viewOnly, setViewOnly] = useState(false);
   const [filters, setFilters] = useState<ProjectFilterState>({
-    title: null,
+    projectManager: null,
     members: null,
     startDate: null,
     endDate: null,
@@ -98,13 +122,7 @@ export default function ProjectsDashboard() {
   // Apply filters to projects
   useEffect(() => {
     const newFilteredProjects = projects.filter((project) => {
-      // Filter by title
-      if (
-        filters.title &&
-        !project.title.toLowerCase().includes(filters.title.toLowerCase())
-      ) {
-        return false;
-      }
+     
 
       // Filter by members (multi-select)
       if (filters.members && filters.members.length > 0) {
