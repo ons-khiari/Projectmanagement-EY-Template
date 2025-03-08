@@ -12,7 +12,6 @@ import {
   ChevronRight,
   Briefcase,
   Layers,
-  FileText,
   CheckCircle2,
   Clock,
   AlertCircle,

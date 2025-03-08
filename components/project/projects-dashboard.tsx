@@ -107,7 +107,7 @@ const sampleProjects: Project[] = [
 export default function ProjectsDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("myProjects");
-  const [projects, setProjects] = useState(sampleProjects);
+  const [projects] = useState(sampleProjects);
   const [filteredProjects, setFilteredProjects] = useState(sampleProjects);
   const [filters, setFilters] = useState<ProjectFilterState>({
     projectManager: null,

@@ -86,7 +86,7 @@ export default function ImprovedScheduleDashboard() {
   const [currentYear, setCurrentYear] = useState(2023);
   const [currentWeek, setCurrentWeek] = useState(0); // First week of the month
   const [currentDay, setCurrentDay] = useState(1); // First day of the month
-  const [deliverablePhases, setDeliverablePhases] = useState(
+  const [deliverablePhases] = useState(
     sampleDeliverablePhases
   );
   const [filteredDeliverablePhases, setFilteredDeliverablePhases] = useState(
