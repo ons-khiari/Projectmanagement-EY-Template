@@ -36,6 +36,12 @@ const sampleProjects: Project[] = [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "2", avatar: "JD", color: "#6366f1" },
     ],
+    client: {
+      id: "1",
+      name: "Google",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg",
+      type: "company",
+    },
   },
   {
     id: "2",
@@ -50,6 +56,12 @@ const sampleProjects: Project[] = [
       { id: "1", avatar: "OK", color: "#27acaa" },
       { id: "3", avatar: "AS", color: "#f43f5e" },
     ],
+    client: {
+      id: "2",
+      name: "Apple",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+      type: "company",
+    },
   },
   {
     id: "3",
@@ -64,6 +76,12 @@ const sampleProjects: Project[] = [
       { id: "2", avatar: "JD", color: "#6366f1" },
       { id: "4", avatar: "MK", color: "#8b5cf6" },
     ],
+    client: {
+      id: "3",
+      name: "Microsoft",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+      type: "company",
+    },
   },
 ];
 
@@ -149,6 +167,7 @@ const kpiData = [
   },
   { title: "Team Members", value: "8", icon: Users, color: "bg-orange-500" },
 ];
+import { AddTaskModal } from "./task/add-task-modal";
 
 export default function MainDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -166,6 +185,19 @@ export default function MainDashboard() {
     orange: "bg-orange-500",
     yellow: "bg-[#ffe500]",
     green: "bg-green-500",
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tasks, setTasks] = useState(sampleTasks);
+
+  // Add this function to handle adding a new task:
+  const handleAddTask = (newTask: Partial<Task>) => {
+    const taskWithId = {
+      ...newTask,
+      id: (tasks.length + 1).toString(), // Create a unique ID
+    } as Task;
+
+    setTasks([...tasks, taskWithId]);
   };
 
   return (
@@ -311,7 +343,10 @@ export default function MainDashboard() {
                 </div>
               </div>
             ))}
-            <button className="flex w-full items-center justify-center rounded-md border border-dashed border-gray-300 p-2 text-sm text-gray-500 hover:bg-gray-50">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex w-full items-center justify-center rounded-md border border-dashed border-gray-300 p-2 text-sm text-gray-500 hover:bg-gray-50"
+            >
               <Plus className="mr-1 h-4 w-4" />
               Add new task
             </button>
@@ -319,6 +354,11 @@ export default function MainDashboard() {
         </div>
       </div>
 
+      <AddTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddTask}
+      />
       {/* Bottom Row */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Upcoming Deliverables */}

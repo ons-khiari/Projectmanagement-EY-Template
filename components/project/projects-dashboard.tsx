@@ -8,6 +8,7 @@ import {
   ProjectFilterBar,
   type ProjectFilterState,
 } from "./project-filter";
+import { AddProjectModal } from "./add-project-modal";
 
 // Sample project data with different progress bar colors
 const sampleProjects: Project[] = [
@@ -172,6 +173,18 @@ export default function ProjectsDashboard() {
     setFilters(newFilters);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Add this function to handle adding a new project:
+  const handleAddProject = (newProject: Partial<Project>) => {
+    const projectWithId = {
+      ...newProject,
+      id: (projects.length + 1).toString(), // Create a unique ID
+    } as Project;
+
+    setProjects([...projects, projectWithId]);
+  };
+
   return (
     <div className="h-full">
       <div className="mb-6 flex items-center justify-between">
@@ -199,12 +212,21 @@ export default function ProjectsDashboard() {
           </button>
         </div>
 
-        <button className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]"
+        >
           <Plus className="h-4 w-4" />
           <span>Add project</span>
         </button>
       </div>
 
+      <AddProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddProject}
+      />
+      
       {/* Filter Bar */}
       <ProjectFilterBar onFilterChange={handleFilterChange} />
 

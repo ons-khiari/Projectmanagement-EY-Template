@@ -18,10 +18,8 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import TaskCard from "./task-card";
 import { TaskDetails } from "./task-details";
-import {
-  TaskFilterBar,
-  type TaskFilterState,
-} from "./task-filter";
+import { TaskFilterBar, type TaskFilterState } from "./task-filter";
+import { AddTaskModal } from "./add-task-modal";
 
 // Sample task data
 const sampleTasks: Record<string, Task[]> = {
@@ -35,6 +33,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "in-progress",
     },
     {
       id: "2",
@@ -45,6 +44,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "in-progress",
     },
     {
       id: "3",
@@ -55,6 +55,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "in-progress",
     },
     {
       id: "4",
@@ -65,6 +66,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "in-progress",
     },
   ],
   inProgress: [
@@ -77,6 +79,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "in-progress",
     },
     {
       id: "6",
@@ -87,6 +90,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "in-progress",
     },
   ],
   done: [
@@ -99,6 +103,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "done",
     },
     {
       id: "8",
@@ -109,6 +114,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "done",
     },
     {
       id: "9",
@@ -119,6 +125,7 @@ const sampleTasks: Record<string, Task[]> = {
       project: "Project 6",
       deliverable: "Deliverable 1",
       deliverablePhase: "Phase 1",
+      status: "done",
     },
   ],
 };
@@ -343,6 +350,23 @@ export default function TaskDashboard() {
     setFilters(newFilters);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Add this function to handle adding a new task:
+  const handleAddTask = (newTask: Partial<Task>) => {
+    const newTaskWithId = {
+      ...newTask,
+      id: (tasks.todo.length + 1).toString(), // Create a unique ID
+      status: "todo", // Set the default status
+    } as Task;
+
+    // Update the tasks state by adding the new task to the todo list
+    setTasks({
+      ...tasks,
+      todo: [...tasks.todo, newTaskWithId],
+    });
+  };
+
   return (
     <div className="h-full">
       <div className="mb-6 flex items-center justify-between">
@@ -370,11 +394,20 @@ export default function TaskDashboard() {
           </button>
         </div>
 
-        <button className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]"
+        >
           <Plus className="h-4 w-4" />
           <span>Add Task</span>
         </button>
       </div>
+
+      <AddTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddTask}
+      />
 
       {/* Filter Bar */}
       <TaskFilterBar onFilterChange={handleFilterChange} />

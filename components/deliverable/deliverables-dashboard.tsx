@@ -21,6 +21,7 @@ import {
   DeliverableFilterBar,
   type DeliverableFilterState,
 } from "./deliverable-filter";
+import { AddDeliverableModal } from "./add-deliverable-modal";
 
 // Sample deliverable data
 const sampleDeliverables: Record<string, Deliverable[]> = {
@@ -368,6 +369,26 @@ export default function DeliverablesDashboard() {
     setFilters(newFilters);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Add this function to handle adding a new deliverable:
+  const handleAddDeliverable = (newDeliverable: Partial<Deliverable>) => {
+    const deliverableWithId = {
+      ...newDeliverable,
+      id: (deliverables.todo.length + 1).toString(), // Create a unique ID
+      status: "todo", // Set the status directly in the deliverable object
+    } as Deliverable;
+
+    // Create a new todo array with the added deliverable
+    const updatedTodoList = [...deliverables.todo, deliverableWithId];
+
+    // Update the deliverables state with the new todo list
+    setDeliverables({
+      ...deliverables,
+      todo: updatedTodoList,
+    });
+  };
+
   return (
     <div className="h-full">
       <div className="mb-6 flex items-center justify-between">
@@ -395,11 +416,20 @@ export default function DeliverablesDashboard() {
           </button>
         </div>
 
-        <button className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-1 rounded-md bg-[#ffe500] px-3 py-1.5 text-sm font-medium text-[#444444] hover:bg-[#f5dc00]"
+        >
           <Plus className="h-4 w-4" />
           <span>Add deliverable</span>
         </button>
       </div>
+
+      <AddDeliverableModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddDeliverable}
+      />
 
       {/* Filter Bar */}
       <DeliverableFilterBar onFilterChange={handleFilterChange} />
